@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TGI Fridays — Franchise Development Intelligence</title>
+<style>
+:root {
+  --red:#E8192C; --red-hover:#C4141F;
+  --bg:#F5F5F7; --surface:#FFFFFF; --surface2:#F5F5F7;
+  --border:rgba(0,0,0,0.08); --border2:rgba(0,0,0,0.14);
+  --text:#1D1D1F; --text2:#6E6E73; --text3:#AEAEB2;
+  --divider:#D2D2D7; --green:#34C759; --orange:#FF9F0A;
+  --shadow:0 1px 4px rgba(0,0,0,0.06),0 0 0 1px rgba(0,0,0,0.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.10),0 0 0 1px rgba(0,0,0,0.04);
+}
+[data-theme="dark"] {
+  --bg:#000; --surface:#1C1C1E; --surface2:#2C2C2E;
+  --border:rgba(255,255,255,0.08); --border2:rgba(255,255,255,0.14);
+  --text:#F5F5F7; --text2:#8E8E93; --text3:#48484A;
+  --divider:#38383A; --shadow:0 1px 4px rgba(0,0,0,0.4),0 0 0 1px rgba(255,255,255,0.04);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.04);
+  --green:#30D158; --orange:#FF9F0A;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased;padding-bottom:58px;}
+
+/* ─── HEADER ─── */
+.header{background:var(--surface);border-bottom:1px solid var(--divider);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:sticky;top:0;z-index:200;}
+.header-left{display:flex;align-items:center;gap:16px;}
+.logo-mark{background:var(--red);color:#fff;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:5px 8px;border-radius:5px;flex-shrink:0;}
+.header-divider{width:1px;height:18px;background:var(--divider);}
+.header-title{font-size:13px;font-weight:500;color:var(--text);letter-spacing:0.01em;}
+.header-right{display:flex;align-items:center;gap:10px;}
+.header-badge{font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text3);border:1px solid var(--divider);border-radius:4px;padding:3px 8px;}
+.theme-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:600;color:var(--text2);letter-spacing:0.04em;text-transform:uppercase;transition:all 0.15s;}
+.theme-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* ─── MISSION BANNER ─── */
+.mission-banner{background:#1A1A1A;border-bottom:3px solid var(--red);padding:24px 28px 20px;}
+.mission-inner{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start;}
+.mission-eyebrow{font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--red);margin-bottom:8px;}
+.mission-title{font-size:26px;font-weight:700;color:#fff;letter-spacing:-0.01em;margin-bottom:10px;line-height:1.2;}
+.mission-desc{font-size:12px;color:#AAAAAA;line-height:1.65;margin-bottom:16px;}
+.mission-stats{display:flex;gap:16px;flex-wrap:wrap;}
+.mstat{text-align:center;padding:10px 14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;}
+.mstat-num{font-size:20px;font-weight:700;color:#fff;}
+.mstat-lbl{font-size:9px;font-weight:600;color:#777;text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
+.mission-steps{display:flex;flex-direction:column;gap:10px;}
+.ms-row{display:flex;align-items:flex-start;gap:10px;}
+.ms-num{width:22px;height:22px;background:var(--red);color:#fff;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.ms-title{font-size:12px;font-weight:600;color:#fff;margin-bottom:2px;}
+.ms-desc{font-size:11px;color:#888;line-height:1.45;}
+@media(max-width:760px){.mission-inner{grid-template-columns:1fr;}.mission-right{display:none;}}
+
+/* ─── MARKET SNAPSHOT STRIP ─── */
+.snapshot-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:14px;}
+.snap-card{background:var(--surface);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.15s;position:relative;overflow:hidden;}
+.snap-card:hover{border-color:var(--red);box-shadow:var(--shadow-md);}
+.snap-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--snap-color,var(--red));}
+.snap-flag{font-size:20px;margin-bottom:6px;}
+.snap-country{font-size:12px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.snap-tier{font-size:10px;color:var(--text3);font-weight:500;margin-bottom:6px;}
+.snap-stat{font-size:11px;font-weight:600;color:var(--snap-color,var(--red));margin-bottom:4px;}
+.snap-note{font-size:10px;color:var(--text2);line-height:1.4;}
+@media(max-width:900px){.snapshot-strip{grid-template-columns:repeat(3,1fr);}
+.snap-card:nth-child(4),.snap-card:nth-child(5){display:none;}}
+
+/* ─── LAYOUT ─── */
+.layout{display:grid;grid-template-columns:360px 1fr;gap:20px;padding:20px;max-width:1160px;margin:0 auto;}
+@media(max-width:760px){.layout{grid-template-columns:1fr;padding:12px;}}
+
+/* ─── CARD ─── */
+.card{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+.card+.card{margin-top:14px;}
+.card-label{font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);padding:14px 18px 0;display:block;}
+.card-body{padding:14px 18px 18px;}
+.sep{height:1px;background:var(--divider);margin:14px 0;}
+.field-label{font-size:10px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3);display:block;margin-bottom:7px;}
+
+/* ─── MARKET LIST ─── */
+.market-list{display:flex;flex-direction:column;gap:2px;}
+.market-row{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:8px;cursor:pointer;transition:background 0.12s;user-select:none;}
+.market-row:hover{background:var(--surface2);}
+.market-flag{font-size:18px;flex-shrink:0;width:24px;text-align:center;}
+.market-name{flex:1;font-size:13px;font-weight:500;color:var(--text);}
+.market-tier{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.04em;text-transform:uppercase;}
+.market-arrow{color:var(--text3);font-size:12px;margin-left:4px;}
+.market-row:hover .market-name{color:var(--red);}
+.market-row:hover .market-arrow{color:var(--red);}
+
+/* ─── COUNTRY INPUT ─── */
+.country-input{width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;font-size:15px;font-weight:500;color:var(--text);outline:none;transition:border-color 0.15s;}
+.country-input:focus{border-color:var(--red);background:var(--surface);}
+.country-input::placeholder{color:var(--text3);font-size:14px;font-weight:400;}
+.chip-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;}
+.chip{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:500;color:var(--text2);background:var(--surface2);border:1px solid var(--border2);cursor:pointer;transition:all 0.12s;user-select:none;}
+.chip:hover{background:var(--red);color:#fff;border-color:var(--red);}
+
+/* ─── PARTNER FOCUS ─── */
+.partner-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+.check-item{display:flex;align-items:center;gap:7px;padding:7px 9px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;cursor:pointer;transition:all 0.12s;user-select:none;}
+.check-item:hover{border-color:var(--red);}
+.check-item.checked{border-color:var(--red);background:rgba(232,25,44,0.05);}
+.check-box{width:14px;height:14px;border-radius:4px;border:1.5px solid var(--border2);background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all 0.12s;}
+.check-item.checked .check-box{background:var(--red);border-color:var(--red);}
+.check-box::after{content:'';width:7px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);display:none;}
+.check-item.checked .check-box::after{display:block;}
+.check-label{font-size:11px;font-weight:500;color:var(--text2);}
+.check-item.checked .check-label{color:var(--text);}
+
+/* ─── MODULE CHIPS (always-on) ─── */
+.module-group{margin-bottom:14px;}
+.module-group-title{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:8px;padding:0 16px;}
+.module-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 16px 4px;}
+.module-chip{display:flex;align-items:center;gap:5px;padding:5px 10px;background:rgba(232,25,44,0.05);border:1px solid rgba(232,25,44,0.18);border-radius:20px;}
+.module-chip-dot{width:6px;height:6px;background:var(--red);border-radius:50%;flex-shrink:0;}
+.module-chip-name{font-size:11px;font-weight:500;color:var(--text);}
+.module-note{font-size:11px;color:var(--text2);padding:0 16px 12px;line-height:1.5;}
+
+/* ─── DEPTH TOGGLE ─── */
+.seg-control{display:grid;grid-template-columns:1fr 1fr;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;padding:3px;gap:2px;}
+.seg-btn{padding:7px;border-radius:6px;text-align:center;cursor:pointer;transition:all 0.15s;user-select:none;}
+.seg-btn.active{background:var(--surface);box-shadow:0 1px 3px rgba(0,0,0,0.12);}
+.seg-title{font-size:12px;font-weight:600;color:var(--text);}
+.seg-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+
+/* ─── SCOPE ROW ─── */
+.scope-row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:var(--surface2);border-radius:7px;border:1px solid var(--border);margin-bottom:10px;}
+.scope-text{font-size:11px;font-weight:500;color:var(--text2);}
+.scope-value{font-size:11px;font-weight:600;color:var(--green);}
+
+/* ─── GENERATE BTN ─── */
+.gen-btn{width:100%;padding:13px;background:var(--red);color:#fff;border:none;border-radius:9px;font-size:13px;font-weight:600;letter-spacing:0.02em;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:7px;}
+.gen-btn:hover{background:var(--red-hover);transform:translateY(-1px);box-shadow:0 4px 12px rgba(232,25,44,0.25);}
+.gen-btn:active{transform:translateY(0);}
+.gen-btn:disabled{background:var(--text3);cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* ─── HISTORY ─── */
+.history-empty{padding:24px 16px;text-align:center;color:var(--text3);font-size:12px;}
+.history-item{border-bottom:1px solid var(--divider);padding:10px 0;}
+.history-item:last-child{border-bottom:none;padding-bottom:0;}
+.history-item-top{display:flex;align-items:center;gap:10px;cursor:pointer;border-radius:6px;padding:2px 0;}
+.history-flag{width:28px;height:28px;background:var(--red);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;}
+.history-country{font-size:12px;font-weight:600;color:var(--text);}
+.history-meta{font-size:10px;color:var(--text3);margin-top:1px;}
+.history-badge{margin-left:auto;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;flex-shrink:0;}
+.badge-ready{background:rgba(52,199,89,0.12);color:var(--green);}
+.badge-pending{background:rgba(255,159,10,0.12);color:var(--orange);}
+.history-links{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap;}
+.hlink{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:5px;font-size:10px;font-weight:600;cursor:pointer;border:none;transition:all 0.12s;}
+.hlink-doc{background:rgba(0,113,227,0.08);color:#0071E3;border:1px solid rgba(0,113,227,0.2);}
+.hlink-doc:hover{background:#0071E3;color:#fff;border-color:#0071E3;}
+.hlink-pending{background:var(--surface2);color:var(--text3);border:1px solid var(--border);cursor:default;pointer-events:none;}
+.hlink-ready{background:rgba(255,159,10,0.08);color:var(--orange);border:1px solid rgba(255,159,10,0.25);cursor:pointer;}
+.hlink-ready:hover{background:var(--orange);color:#fff;border-color:var(--orange);}
+
+/* ─── WELCOME / ACTIVE ─── */
+.welcome-card{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);padding:24px 22px;text-align:center;margin-bottom:14px;}
+.welcome-eyebrow{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--red);margin-bottom:8px;}
+.welcome-title{font-size:20px;font-weight:600;color:var(--text);margin-bottom:8px;}
+.welcome-body{font-size:12px;color:var(--text2);line-height:1.65;max-width:400px;margin:0 auto;}
+.stat-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:18px;}
+.stat-box{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 16px;text-align:center;min-width:80px;}
+.stat-num{font-size:20px;font-weight:700;color:var(--text);}
+.stat-label{font-size:9px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;}
+.active-card{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);border-top:3px solid var(--red);padding:18px 20px;margin-bottom:14px;}
+.active-country{font-size:18px;font-weight:700;color:var(--text);letter-spacing:0.01em;}
+.active-status{font-size:12px;color:var(--text2);margin-top:4px;display:flex;align-items:center;gap:6px;}
+.spinner{width:12px;height:12px;border:2px solid var(--divider);border-top-color:var(--red);border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.progress-steps{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
+.progress-step{display:flex;align-items:center;gap:10px;}
+.step-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;}
+.step-pending{background:var(--surface2);color:var(--text3);border:1px solid var(--border2);}
+.step-active{background:var(--red);color:#fff;}
+.step-done{background:var(--green);color:#fff;}
+.step-label{font-size:11px;color:var(--text3);}
+.step-label-active{font-size:11px;color:var(--text);font-weight:500;}
+.drive-wrap{display:none;margin-top:14px;gap:8px;}
+.drive-wrap.visible{display:flex;}
+.drive-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;padding:9px 12px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:all 0.14s;}
+.drive-btn-blue{background:#0071E3;color:#fff;}
+.drive-btn-blue:hover{background:#0059B3;}
+.drive-btn-ghost{background:var(--surface2);color:var(--text);border:1px solid var(--border2);}
+.drive-btn-ghost:hover{border-color:var(--red);color:var(--red);}
+
+/* ─── TAB SYSTEM ─── */
+.tab-card{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);overflow:hidden;}
+.tab-bar{display:flex;background:var(--surface2);border-bottom:1px solid var(--divider);padding:0 14px;gap:0;overflow-x:auto;}
+.tab-bar::-webkit-scrollbar{display:none;}
+.tab-btn{padding:12px 13px;font-size:11px;font-weight:600;letter-spacing:0.02em;color:var(--text3);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;transition:all 0.15s;margin-bottom:-1px;white-space:nowrap;}
+.tab-btn:hover{color:var(--text2);}
+.tab-btn.active{color:var(--red);border-bottom-color:var(--red);}
+.tab-pane{display:none;padding:18px;}
+.tab-pane.active{display:block;}
+
+/* ─── INCLUDE GROUPS ─── */
+.include-group{margin-bottom:14px;}
+.include-group:last-child{margin-bottom:0;}
+.group-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;padding:0 2px;}
+.group-title{font-size:11px;font-weight:700;color:var(--text);letter-spacing:0.02em;}
+.group-toggle{font-size:10px;font-weight:600;color:var(--text3);background:none;border:1px solid var(--border2);border-radius:5px;padding:2px 8px;cursor:pointer;transition:all 0.12s;}
+.group-toggle:hover{border-color:var(--red);color:var(--red);}
+.include-list{background:var(--surface2);border:1px solid var(--border);border-radius:9px;overflow:hidden;}
+.include-item{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.12s;user-select:none;}
+.include-item:last-child{border-bottom:none;}
+.include-item:hover{background:var(--surface);}
+.include-item.checked{background:rgba(232,25,44,0.04);}
+.include-cb{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--border2);background:var(--surface);flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all 0.12s;}
+.include-item.checked .include-cb{background:var(--red);border-color:var(--red);}
+.include-cb::after{content:'';width:7px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translateY(-1px);display:none;}
+.include-item.checked .include-cb::after{display:block;}
+.include-item-name{font-size:12px;font-weight:600;color:var(--text);}
+.include-item-desc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.45;}
+
+/* ─── COMPETITOR TAB ─── */
+.comp-hero{background:var(--surface2);border:2px solid var(--red);border-radius:12px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden;}
+.comp-hero::before{content:'PRIMARY COMPETITOR';position:absolute;top:10px;right:12px;font-size:9px;font-weight:700;letter-spacing:0.08em;color:var(--red);background:rgba(232,25,44,0.1);padding:2px 7px;border-radius:4px;}
+.comp-hero-name{font-size:18px;font-weight:700;color:var(--text);margin-bottom:2px;}
+.comp-hero-parent{font-size:11px;color:var(--text2);margin-bottom:12px;}
+.comp-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+.comp-metric{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:8px 10px;text-align:center;}
+.comp-metric-val{font-size:14px;font-weight:700;color:var(--text);}
+.comp-metric-lbl{font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;}
+.comp-rows{display:flex;flex-direction:column;gap:6px;}
+.comp-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);}
+.comp-row:last-child{border-bottom:none;}
+.comp-row-label{font-size:11px;color:var(--text2);}
+.comp-row-val{font-size:11px;font-weight:600;color:var(--text);}
+.threat-high{color:#E8192C;font-weight:700;}
+.threat-med{color:#FF9F0A;font-weight:700;}
+.threat-low{color:#34C759;font-weight:700;}
+
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.comp-card{background:var(--surface2);border:1px solid var(--border2);border-radius:10px;padding:12px;}
+.comp-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.comp-brand{font-size:13px;font-weight:700;color:var(--text);}
+.comp-parent-sm{font-size:10px;color:var(--text3);margin-top:1px;}
+.threat-badge{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:0.05em;}
+.tb-high{background:rgba(232,25,44,0.12);color:#E8192C;}
+.tb-med{background:rgba(255,159,10,0.12);color:#FF9F0A;}
+.tb-low{background:rgba(52,199,89,0.12);color:#34C759;}
+.comp-facts{display:flex;flex-direction:column;gap:4px;}
+.comp-fact{font-size:10px;color:var(--text2);display:flex;justify-content:space-between;}
+.comp-fact-val{font-weight:600;color:var(--text);}
+.comp-tgi-edge{margin-top:8px;padding:6px 8px;background:rgba(232,25,44,0.06);border-left:2px solid var(--red);border-radius:0 5px 5px 0;font-size:10px;color:var(--text2);line-height:1.4;}
+
+.matrix-section{background:var(--surface2);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.matrix-head{padding:10px 14px;border-bottom:1px solid var(--divider);display:flex;align-items:center;justify-content:space-between;}
+.matrix-title{font-size:11px;font-weight:700;color:var(--text);}
+.matrix-table{width:100%;border-collapse:collapse;}
+.matrix-table th{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em;padding:8px 10px;text-align:left;background:var(--surface2);border-bottom:1px solid var(--divider);}
+.matrix-table td{font-size:11px;color:var(--text2);padding:7px 10px;border-bottom:1px solid var(--border);}
+.matrix-table tr:last-child td{border-bottom:none;}
+.matrix-table tr:hover td{background:rgba(0,0,0,0.02);}
+[data-theme="dark"] .matrix-table tr:hover td{background:rgba(255,255,255,0.03);}
+.m-brand{font-weight:600;color:var(--text);}
+.m-tgi{background:rgba(232,25,44,0.05);}
+.m-tgi td{color:var(--text);}
+.bar-prog{display:inline-flex;gap:2px;}
+.bp{width:8px;height:8px;border-radius:2px;}
+.bp-on{background:var(--red);}
+.bp-off{background:var(--border2);}
+
+/* ─── ASSET CARDS ─── */
+.asset-list{display:flex;flex-direction:column;gap:8px;}
+.asset-row{display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;cursor:pointer;transition:all 0.15s;}
+.asset-row:hover{border-color:var(--red);background:rgba(232,25,44,0.03);}
+.asset-icon-box{width:36px;height:36px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.ai-red{background:rgba(232,25,44,0.1);}
+.ai-blue{background:rgba(0,113,227,0.1);}
+.ai-indig{background:rgba(94,92,230,0.1);}
+.asset-name{font-size:12px;font-weight:600;color:var(--text);}
+.asset-meta{font-size:10px;color:var(--text3);margin-top:2px;}
+.asset-open{margin-left:auto;font-size:11px;font-weight:600;color:var(--text3);flex-shrink:0;transition:color 0.14s;}
+.asset-row:hover .asset-open{color:var(--red);}
+
+/* ─── COLLAPSIBLE ─── */
+.collapsible{background:var(--surface);border-radius:10px;box-shadow:var(--shadow);overflow:hidden;margin-top:12px;}
+.collapsible-trigger{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;transition:background 0.12s;}
+.collapsible-trigger:hover{background:var(--surface2);}
+.collapsible-trigger-left{display:flex;align-items:center;gap:8px;}
+.collapsible-dot{width:6px;height:6px;background:var(--red);border-radius:50%;flex-shrink:0;}
+.collapsible-label{font-size:12px;font-weight:500;color:var(--text2);}
+.collapsible-chevron{font-size:10px;color:var(--text3);transition:transform 0.2s;}
+.collapsible-chevron.open{transform:rotate(180deg);}
+.collapsible-body{display:none;border-top:1px solid var(--divider);padding:16px;}
+.collapsible-body.open{display:block;}
+
+/* ─── SECTION ROWS ─── */
+.section-list{display:flex;flex-direction:column;gap:5px;}
+.section-row-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;}
+.section-num{width:22px;height:22px;background:var(--red);color:#fff;border-radius:5px;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.section-text{font-size:11px;font-weight:500;color:var(--text2);flex:1;}
+.stag{font-size:9px;font-weight:600;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.04em;}
+.stag-research{background:rgba(94,92,230,0.1);color:#5E5CE6;}
+.stag-gtm{background:rgba(52,199,89,0.1);color:#34C759;}
+.stag-creative{background:rgba(255,159,10,0.1);color:#FF9F0A;}
+.stag-doc{background:rgba(0,113,227,0.1);color:#0071E3;}
+
+/* ─── HOW STEPS ─── */
+.how-step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--divider);}
+.how-step:last-child{border-bottom:none;padding-bottom:0;}
+.how-num{width:22px;height:22px;background:var(--red);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;}
+.how-title{font-size:12px;font-weight:600;color:var(--text);}
+.how-desc{font-size:11px;color:var(--text2);margin-top:2px;line-height:1.5;}
+
+/* ─── NOTE ─── */
+.note{background:rgba(232,25,44,0.05);border-left:3px solid var(--red);border-radius:0 6px 6px 0;padding:9px 12px;font-size:11px;color:var(--text2);line-height:1.55;margin-bottom:14px;}
+
+/* ─── FOOTER MARKET TABS ─── */
+.footer-markets{position:fixed;bottom:0;left:0;right:0;z-index:300;background:var(--surface);border-top:1px solid var(--divider);height:50px;display:flex;align-items:center;padding:0 20px;gap:8px;box-shadow:0 -2px 12px rgba(0,0,0,0.08);}
+.footer-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-right:4px;white-space:nowrap;}
+.footer-tabs{display:flex;gap:6px;overflow-x:auto;flex:1;}
+.footer-tabs::-webkit-scrollbar{display:none;}
+.ftab{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:7px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
+.ftab:hover{border-color:var(--red);background:rgba(232,25,44,0.05);}
+.ftab-flag{font-size:14px;}
+.ftab-name{font-size:11px;font-weight:600;color:var(--text2);}
+.ftab:hover .ftab-name{color:var(--red);}
+.footer-divider{width:1px;height:24px;background:var(--divider);margin:0 4px;flex-shrink:0;}
+.footer-cta{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;background:var(--red);color:#fff;border:none;cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;transition:all 0.14s;flex-shrink:0;}
+.footer-cta:hover{background:var(--red-hover);}
+.footer-cta-outline{display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;background:transparent;color:var(--red);border:1.5px solid var(--red);cursor:pointer;font-size:11px;font-weight:600;white-space:nowrap;transition:all 0.14s;flex-shrink:0;}
+.footer-cta-outline:hover{background:rgba(232,25,44,0.07);}
+.footer-btns{display:flex;gap:6px;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="header">
+  <div class="header-left">
+    <span class="logo-mark">TGI</span>
+    <div class="header-divider"></div>
+    <span class="header-title">Franchise Development Intelligence</span>
+  </div>
+  <div class="header-right">
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">Dark</button>
+    <span class="header-badge">Internal Use Only</span>
+  </div>
+</header>
+
+<!-- ══ MISSION BANNER ══ -->
+<div class="mission-banner">
+  <div class="mission-inner">
+    <div class="mission-left">
+      <div class="mission-eyebrow">TGI Fridays · International Franchise Development</div>
+      <h1 class="mission-title">Market Analysis &amp; GTM Platform</h1>
+      <p class="mission-desc">Built for the TGI Fridays International Franchise Development team to research new markets, identify ideal franchise partners, analyse the competitive landscape, and execute data-driven GTM strategies — powered by live AI research. Select a market, configure your scope, and receive a complete strategy package including a Word document ready to share.</p>
+      <div class="mission-stats">
+        <div class="mstat"><div class="mstat-num">5</div><div class="mstat-lbl">Priority Markets</div></div>
+        <div class="mstat"><div class="mstat-num">14</div><div class="mstat-lbl">Research Modules</div></div>
+        <div class="mstat"><div class="mstat-num">20</div><div class="mstat-lbl">Named Partners</div></div>
+        <div class="mstat"><div class="mstat-num">2×</div><div class="mstat-lbl">Languages</div></div>
+        <div class="mstat"><div class="mstat-num">100+</div><div class="mstat-lbl">Countries</div></div>
+      </div>
+    </div>
+    <div class="mission-right">
+      <div class="mission-steps">
+        <div class="ms-row"><div class="ms-num">1</div><div><div class="ms-title">Select a Market</div><div class="ms-desc">Choose from 5 priority markets in the footer or enter any country in the world. Quick-start chips for common expansion targets.</div></div></div>
+        <div class="ms-row"><div class="ms-num">2</div><div><div class="ms-title">Configure Research Scope</div><div class="ms-desc">Use the module tabs at the bottom to select exactly which sections to include — from market size and competitive analysis to partner outreach sequences and localised creative.</div></div></div>
+        <div class="ms-row"><div class="ms-num">3</div><div><div class="ms-title">Claude Researches Live</div><div class="ms-desc">Real-time web research pulls current market data, Brinker/competitor financials, franchise operators, PE fund activity, and industry events — no static reports.</div></div></div>
+        <div class="ms-row"><div class="ms-num">4</div><div><div class="ms-title">Full GTM Package Delivered</div><div class="ms-desc">A complete formatted Word document is saved to your TGI workspace — includes partner directory, 5-touch outreach sequences, bilingual creative, and 30–60 day action plan.</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ LAYOUT ══ -->
+<div class="layout">
+
+  <!-- ══ LEFT COLUMN ══ -->
+  <div id="leftCol">
+
+
+    <!-- CONFIGURE -->
+    <div class="card">
+      <span class="card-label">Configure Analysis</span>
+      <div class="card-body">
+
+        <div style="margin-bottom:14px;">
+          <span class="field-label">Country</span>
+          <input class="country-input" type="text" id="countryInput" placeholder="Enter any country…" autocomplete="off" />
+          <div class="chip-row">
+            <span class="chip" onclick="setCountry('Japan')">Japan</span>
+            <span class="chip" onclick="setCountry('UAE')">UAE</span>
+            <span class="chip" onclick="setCountry('Brazil')">Brazil</span>
+            <span class="chip" onclick="setCountry('India')">India</span>
+            <span class="chip" onclick="setCountry('Saudi Arabia')">Saudi Arabia</span>
+            <span class="chip" onclick="setCountry('Australia')">Australia</span>
+            <span class="chip" onclick="setCountry('Mexico')">Mexico</span>
+            <span class="chip" onclick="setCountry('UK')">UK</span>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div style="margin-bottom:14px;">
+          <span class="field-label">Partner Focus <span style="font-weight:500;text-transform:none;letter-spacing:0;font-size:10px;color:var(--text3);"> — optional</span></span>
+          <div class="partner-grid" id="partnerTypes">
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">F&amp;B Operators</span></div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">PE / Investors</span></div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Hotel Groups</span></div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">HNW / Family Office</span></div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Real Estate / Malls</span></div>
+            <div class="check-item" onclick="toggleCheck(this)"><div class="check-box"></div><span class="check-label">Conglomerates</span></div>
+          </div>
+          <div style="margin-top:7px;">
+            <input class="country-input" type="text" id="customPartner" placeholder="Or describe a specific partner type…" style="font-size:12px;padding:8px 10px;" />
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div style="margin-bottom:14px;">
+          <span class="field-label">Analysis Depth</span>
+          <div class="seg-control">
+            <div class="seg-btn" id="depthStandard" onclick="setDepth('standard')">
+              <div class="seg-title">Standard</div><div class="seg-sub">Core sections</div>
+            </div>
+            <div class="seg-btn active" id="depthDeep" onclick="setDepth('deep')">
+              <div class="seg-title">Deep Dive</div><div class="seg-sub">Full report</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="scope-row">
+          <span class="scope-text">Report scope</span>
+          <span class="scope-value" id="scopeLabel">Full · 14 modules on</span>
+        </div>
+
+        <button class="gen-btn" id="generateBtn" onclick="generate()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M13 3L4 14h7l-2 7 9-11h-7z"/></svg>
+          Generate Full Analysis
+        </button>
+
+      </div>
+    </div>
+
+    <!-- RECENT ANALYSES -->
+    <div class="card">
+      <span class="card-label">Recent Analyses</span>
+      <div class="card-body" id="historyBody">
+        <div class="history-empty">No analyses yet. Select a market above to begin.</div>
+      </div>
+    </div>
+
+  </div><!-- /left -->
+
+  <!-- ══ RIGHT COLUMN ══ -->
+  <div id="rightCol">
+
+    <!-- WELCOME / ACTIVE -->
+    <div id="welcomeCard" class="welcome-card">
+      <div class="welcome-eyebrow">Select a Market to Begin</div>
+      <div class="welcome-title">Market Analysis &amp; GTM Platform</div>
+      <div class="welcome-body">Choose a priority market from the footer tabs or left panel, configure your research scope using the module tabs below, then generate — Claude conducts live research and builds your complete franchise development package.</div>
+      <div class="stat-row">
+        <div class="stat-box"><div class="stat-num">14</div><div class="stat-label">Modules</div></div>
+        <div class="stat-box"><div class="stat-num">4+</div><div class="stat-label">Partners</div></div>
+        <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Sequences</div></div>
+        <div class="stat-box"><div class="stat-num">2×</div><div class="stat-label">Languages</div></div>
+      </div>
+    </div>
+
+    <div id="activeCard" style="display:none;">
+      <div class="active-card">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="font-size:30px;" id="activeFlag">—</div>
+          <div>
+            <div class="active-country" id="activeCountryName">—</div>
+            <div class="active-status">
+              <span class="spinner" id="activeSpinner"></span>
+              <span id="activeStatusText">Building analysis…</span>
+            </div>
+          </div>
+        </div>
+        <div class="progress-steps" id="progressSteps"></div>
+        <div class="drive-wrap" id="driveActions">
+          <button class="drive-btn drive-btn-blue" onclick="uploadToDrive()">Save to Google Drive</button>
+          <button class="drive-btn drive-btn-ghost" onclick="openDocFromCard()">Open .docx</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MARKET SNAPSHOTS -->
+    <div class="snapshot-strip">
+      <div class="snap-card" style="--snap-color:#C0392B;" onclick="setCountry('Poland')">
+        <div class="snap-flag">🇵🇱</div>
+        <div class="snap-country">Poland</div>
+        <div class="snap-tier">CEE Hub · Priority</div>
+        <div class="snap-stat">GDP ~$750B</div>
+        <div class="snap-note">Largest CEE economy. Mature mall infrastructure. AmRest, Sfinks active operators.</div>
+      </div>
+      <div class="snap-card" style="--snap-color:#E67E22;" onclick="setCountry('China')">
+        <div class="snap-flag">🇨🇳</div>
+        <div class="snap-country">China</div>
+        <div class="snap-tier">Tier 1 · Strategic</div>
+        <div class="snap-stat">F&amp;B Market $700B+</div>
+        <div class="snap-note">Fastest-growing casual dining segment. Tier 1 &amp; 2 cities. Yum China, FountainVest targets.</div>
+      </div>
+      <div class="snap-card" style="--snap-color:#27AE60;" onclick="setCountry('Indonesia')">
+        <div class="snap-flag">🇮🇩</div>
+        <div class="snap-country">Indonesia</div>
+        <div class="snap-tier">Growth · Expansion</div>
+        <div class="snap-stat">270M Population</div>
+        <div class="snap-note">SEA's largest economy. Mall-centric dining. Halal-critical. MAP Boga, Lippo Group targets.</div>
+      </div>
+      <div class="snap-card" style="--snap-color:#2980B9;" onclick="setCountry('Thailand')">
+        <div class="snap-flag">🇹🇭</div>
+        <div class="snap-country">Thailand</div>
+        <div class="snap-tier">Active · Rebuild</div>
+        <div class="snap-stat">Market ~$20B</div>
+        <div class="snap-note">Bangkok top 5 Asia dining city. Tourism rebound. Minor International, CRG targets.</div>
+      </div>
+      <div class="snap-card" style="--snap-color:#8E44AD;" onclick="setCountry('South Korea')">
+        <div class="snap-flag">🇰🇷</div>
+        <div class="snap-country">South Korea</div>
+        <div class="snap-tier">Re-entry · Premium</div>
+        <div class="snap-stat">Seoul Top 5 Asia</div>
+        <div class="snap-note">Sophisticated dining market. K-culture driving Western affinity. SPC Group, Lotte GRS targets.</div>
+      </div>
+    </div>
+
+
+    <!-- ══ RESEARCH SCOPE TABS (at end) ══ -->
+    <div class="tab-card" style="margin-bottom:14px;">
+      <div style="padding:12px 18px 0;border-bottom:1px solid var(--divider);background:var(--surface2);">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:2px;">Research &amp; Deliverable Scope</div>
+        <div style="font-size:11px;color:var(--text2);padding-bottom:10px;">Select modules to include in the generated analysis. All checked modules will be researched live and included in the Word document.</div>
+      </div>
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tab-research" onclick="switchTab('research')">Market Research</button>
+        <button class="tab-btn" id="tab-gtm" onclick="switchTab('gtm')">GTM &amp; Channels</button>
+        <button class="tab-btn" id="tab-creative" onclick="switchTab('creative')">Creative</button>
+        <button class="tab-btn" id="tab-assets" onclick="switchTab('assets')">Assets</button>
+      </div>
+
+      <!-- MARKET RESEARCH TAB -->
+      <div class="tab-pane active" id="pane-research">
+        <div class="module-note">All modules below are included in every generated report — live-researched for the selected market.</div>
+
+        <div class="module-group">
+          <div class="module-group-title">Market Intelligence</div>
+          <div class="module-chips">
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Market Overview</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Industry Analysis</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Latest Market Trends</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Our Opportunity</span></div>
+          </div>
+        </div>
+
+        <div class="module-group">
+          <div class="module-group-title">Competitive Analysis</div>
+          <div class="module-chips">
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Chili's Deep Dive</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Category Competitors</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Local Casual Dining</span></div>
+          </div>
+        </div>
+
+        <div class="module-group">
+          <div class="module-group-title">Franchise Economics</div>
+          <div class="module-chips">
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Unit Economics Projection</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Real Estate &amp; Site Strategy</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Entry Mode Analysis</span></div>
+          </div>
+        </div>
+
+        <div class="module-group">
+          <div class="module-group-title">Consumer Intelligence</div>
+          <div class="module-chips">
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Target Consumer Persona</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Cultural &amp; Menu Fit Assessment</span></div>
+          </div>
+        </div>
+
+      </div><!-- /pane-research -->
+
+      <!-- GTM & CHANNELS TAB -->
+      <div class="tab-pane" id="pane-gtm">
+        <div class="module-note">All GTM modules are generated for every analysis — personalised to the selected market and partner type.</div>
+
+        <div class="module-group">
+          <div class="module-group-title">Partner Intelligence</div>
+          <div class="module-chips">
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Ideal Franchise Partner Profile</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Target Partner Directory (4 Named)</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Events &amp; Networking Calendar</span></div>
+          </div>
+        </div>
+
+        <div class="module-group">
+          <div class="module-group-title">Outreach Strategy</div>
+          <div class="module-chips">
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Channel Priority Map</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">5-Touch Outreach Sequences</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Automated Stack ($400–800/mo)</span></div>
+          </div>
+        </div>
+
+        <div class="module-group">
+          <div class="module-group-title">Local Ecosystem</div>
+          <div class="module-chips">
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Franchise Broker Network</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Government &amp; Trade Body Support</span></div>
+          </div>
+        </div>
+
+        <div class="module-group">
+          <div class="module-group-title">Deliverable</div>
+          <div class="module-chips">
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Word Document (.docx) — saved to TGI workspace</span></div>
+          </div>
+        </div>
+
+      </div><!-- /pane-gtm -->
+
+      <!-- CREATIVE TAB -->
+      <div class="tab-pane" id="pane-creative">
+        <div class="module-note">All creative outputs are produced in <strong style="color:var(--text);">English + the local language</strong> of the target market.</div>
+
+        <div class="module-group">
+          <div class="module-group-title">Brand &amp; Messaging</div>
+          <div class="module-chips">
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Creative Direction Brief</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Localised B2B Messaging (EN + local)</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Social &amp; Digital Copy — Bilingual</span></div>
+            <div class="module-chip"><div class="module-chip-dot"></div><span class="module-chip-name">Campaign Concepts (3)</span></div>
+          </div>
+        </div>
+      </div><!-- /pane-creative -->
+
+      <!-- ASSETS TAB -->
+      <div class="tab-pane" id="pane-assets">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:14px;">Click any asset to open it in chat.</p>
+        <div class="asset-list">
+          <div class="asset-row" onclick="openFile('/Users/ahmedhany/Documents/Claude/Projects/TGI/Franchise-Deck-v4_10.10.pdf')">
+            <div class="asset-icon-box ai-red"><svg width="16" height="16" viewBox="0 0 24 24" fill="#E8192C"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/></svg></div>
+            <div style="flex:1;min-width:0;"><div class="asset-name">Franchise Deck v4</div><div class="asset-meta">Partner pitch · formats, investment model, ROI projections · PDF · Oct 2024</div></div>
+            <span class="asset-open">Open ›</span>
+          </div>
+          <div class="asset-row" onclick="openFile('/Users/ahmedhany/Documents/Claude/Projects/TGI/FridaysBrandIdentity_1025 3[71].pdf')">
+            <div class="asset-icon-box ai-indig"><svg width="16" height="16" viewBox="0 0 24 24" fill="#5E5CE6"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7zm-1-11h2v6h-2zm0 8h2v2h-2z"/></svg></div>
+            <div style="flex:1;min-width:0;"><div class="asset-name">Brand Identity Guide</div><div class="asset-meta">Colors, typography, photography, logo usage, tone of voice · PDF · Oct 2025</div></div>
+            <span class="asset-open">Open ›</span>
+          </div>
+          <div class="asset-row" onclick="openFile('/Users/ahmedhany/Documents/Claude/Projects/TGI/TGI_Fridays_GTM_Partner_Directory.docx')">
+            <div class="asset-icon-box ai-blue"><svg width="16" height="16" viewBox="0 0 24 24" fill="#0071E3"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11zM8 15h8v2H8zm0-4h8v2H8zm0-4h5v2H8z"/></svg></div>
+            <div style="flex:1;min-width:0;"><div class="asset-name">GTM Partner Directory</div><div class="asset-meta">Poland · China · Indonesia · Thailand · South Korea · 20 named partners · Word Doc</div></div>
+            <span class="asset-open">Open ›</span>
+          </div>
+          <div class="asset-row" onclick="openFile('/Users/ahmedhany/Documents/Claude/Projects/TGI/TGI_Fridays_GTM_Partner_Directory.xlsx')">
+            <div class="asset-icon-box" style="background:rgba(52,199,89,0.1);"><svg width="16" height="16" viewBox="0 0 24 24" fill="#34C759"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14H7v-2h5v2zm5-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+            <div style="flex:1;min-width:0;"><div class="asset-name">Partner Directory Spreadsheet</div><div class="asset-meta">Google Sheets-compatible · 20 partners · LinkedIn + website links · 7 tabs</div></div>
+            <span class="asset-open">Open ›</span>
+          </div>
+        </div>
+      </div><!-- /pane-assets -->
+
+    </div><!-- /tab-card -->
+
+    <!-- WHAT GETS BUILT -->
+    <div class="collapsible">
+      <div class="collapsible-trigger" onclick="toggleCollapsible('sections')">
+        <div class="collapsible-trigger-left"><div class="collapsible-dot"></div><span class="collapsible-label">What gets built — full report structure</span></div>
+        <span class="collapsible-chevron" id="chevron-sections">▼</span>
+      </div>
+      <div class="collapsible-body" id="body-sections">
+        <div class="note">Every analysis follows this structure, auto-adapted using live web research. Sections are produced in sequence — each builds on the previous.</div>
+        <div class="section-list">
+          <div class="section-row-item"><div class="section-num">1</div><div class="section-text">Market Snapshot — key metrics table</div><span class="stag stag-research">Research</span></div>
+          <div class="section-row-item"><div class="section-num">2</div><div class="section-text">Industry Analysis — casual dining sector, franchise law, FX</div><span class="stag stag-research">Research</span></div>
+          <div class="section-row-item"><div class="section-num">3</div><div class="section-text">American Casual Dining Competitive Analysis — full category</div><span class="stag stag-research">Research</span></div>
+          <div class="section-row-item"><div class="section-num">4</div><div class="section-text">Chili's Deep-Dive — Brinker financials + local operator</div><span class="stag stag-research">Research</span></div>
+          <div class="section-row-item"><div class="section-num">5</div><div class="section-text">Consumer Persona &amp; Cultural Fit Assessment</div><span class="stag stag-research">Research</span></div>
+          <div class="section-row-item"><div class="section-num">6</div><div class="section-text">Unit Economics Projection — AUV, margins, payback period</div><span class="stag stag-research">Research</span></div>
+          <div class="section-row-item"><div class="section-num">7</div><div class="section-text">Real Estate &amp; Site Strategy — top typologies, rent benchmarks</div><span class="stag stag-research">Research</span></div>
+          <div class="section-row-item"><div class="section-num">8</div><div class="section-text">Entry Mode Analysis — master vs area developer vs direct</div><span class="stag stag-research">Research</span></div>
+          <div class="section-row-item"><div class="section-num">9</div><div class="section-text">Market Opportunity &amp; Entry Recommendation</div><span class="stag stag-research">Research</span></div>
+          <div class="section-row-item"><div class="section-num">10</div><div class="section-text">Ideal Franchise Partner Profile + Target Directory (4 named)</div><span class="stag stag-gtm">GTM</span></div>
+          <div class="section-row-item"><div class="section-num">11</div><div class="section-text">Franchise Broker Network + Government Trade Support</div><span class="stag stag-gtm">GTM</span></div>
+          <div class="section-row-item"><div class="section-num">12</div><div class="section-text">Channel Map + 5-Touch Outreach Sequences + Automated Stack</div><span class="stag stag-gtm">GTM</span></div>
+          <div class="section-row-item"><div class="section-num">13</div><div class="section-text">Risk Register — likelihood, impact, mitigation</div><span class="stag stag-research">Research</span></div>
+          <div class="section-row-item"><div class="section-num">14</div><div class="section-text">Creative Brief + Bilingual Messaging (EN + local language)</div><span class="stag stag-creative">Creative</span></div>
+          <div class="section-row-item"><div class="section-num">15</div><div class="section-text">30–60 Day Action Plan — concrete actions with owner + deadline</div><span class="stag stag-gtm">GTM</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="collapsible" style="margin-bottom:14px;">
+      <div class="collapsible-trigger" onclick="toggleCollapsible('how')">
+        <div class="collapsible-trigger-left"><div class="collapsible-dot"></div><span class="collapsible-label">How it works</span></div>
+        <span class="collapsible-chevron" id="chevron-how">▼</span>
+      </div>
+      <div class="collapsible-body" id="body-how">
+        <div class="how-step"><div class="how-num">1</div><div><div class="how-title">Select Market via Footer Tabs or Left Panel</div><div class="how-desc">The 5 priority markets are pinned in the footer bar at the bottom of the screen. Click any country tab to pre-fill the market. You can also enter any country in the world using the Configure panel on the left.</div></div></div>
+        <div class="how-step"><div class="how-num">2</div><div><div class="how-title">Review the Competitive Landscape</div><div class="how-desc">The Competitor Analysis section above gives you the global category benchmark — Chili's as primary threat, plus all other American casual dining brands with threat ratings, positioning metrics, and TGI differentiators. The live analysis will add market-specific data.</div></div></div>
+        <div class="how-step"><div class="how-num">3</div><div><div class="how-title">Review the Scope</div><div class="how-desc">The Research, GTM, and Creative tabs show all 14 modules that will be included in every analysis — market intelligence, competitive analysis, franchise economics, partner directory, outreach sequences, and bilingual creative.</div></div></div>
+        <div class="how-step"><div class="how-num">4</div><div><div class="how-title">Generate — Claude Researches Live</div><div class="how-desc">Claude conducts real-time web research — current market data, Brinker financials, franchise operators, PE activity, events. No static reports. 2–4 minutes for a full analysis.</div></div></div>
+        <div class="how-step"><div class="how-num">5</div><div><div class="how-title">Word Document Saved to Workspace</div><div class="how-desc">A complete formatted .docx is saved to your TGI Projects folder — includes all selected sections, partner directory, 5-touch outreach sequences, bilingual creative, and 30–60 day action plan.</div></div></div>
+      </div>
+    </div>
+
+  </div><!-- /right -->
+</div><!-- /layout -->
+
+<!-- ══ FOOTER MARKET TABS ══ -->
+<div class="footer-markets">
+  <span class="footer-label">Markets:</span>
+  <div class="footer-tabs">
+    <div class="ftab" onclick="setCountry('Poland')"><span class="ftab-flag">🇵🇱</span><span class="ftab-name">Poland</span></div>
+    <div class="ftab" onclick="setCountry('China')"><span class="ftab-flag">🇨🇳</span><span class="ftab-name">China</span></div>
+    <div class="ftab" onclick="setCountry('Indonesia')"><span class="ftab-flag">🇮🇩</span><span class="ftab-name">Indonesia</span></div>
+    <div class="ftab" onclick="setCountry('Thailand')"><span class="ftab-flag">🇹🇭</span><span class="ftab-name">Thailand</span></div>
+    <div class="ftab" onclick="setCountry('South Korea')"><span class="ftab-flag">🇰🇷</span><span class="ftab-name">South Korea</span></div>
+    <div class="footer-divider"></div>
+    <div class="ftab" onclick="setCountry('Japan')"><span class="ftab-flag">🇯🇵</span><span class="ftab-name">Japan</span></div>
+    <div class="ftab" onclick="setCountry('UAE')"><span class="ftab-flag">🇦🇪</span><span class="ftab-name">UAE</span></div>
+    <div class="ftab" onclick="setCountry('India')"><span class="ftab-flag">🇮🇳</span><span class="ftab-name">India</span></div>
+    <div class="ftab" onclick="setCountry('Saudi Arabia')"><span class="ftab-flag">🇸🇦</span><span class="ftab-name">Saudi Arabia</span></div>
+    <div class="ftab" onclick="setCountry('Brazil')"><span class="ftab-flag">🇧🇷</span><span class="ftab-name">Brazil</span></div>
+  </div>
+  <div class="footer-divider"></div>
+  <div class="footer-btns">
+    <button class="footer-cta-outline" onclick="generateGTM()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+      GTM Only
+    </button>
+    <button class="footer-cta-outline" onclick="generateCreative()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9zm0 16c-3.86 0-7-3.14-7-7s3.14-7 7-7 7 3.14 7 7-3.14 7-7 7zm-1-11h2v6h-2zm0 8h2v2h-2z"/></svg>
+      Creative Brief
+    </button>
+    <button class="footer-cta" onclick="generate()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M13 3L4 14h7l-2 7 9-11h-7z"/></svg>
+      Full Analysis
+    </button>
+  </div>
+</div>
+
+<script>
+let depth = 'deep';
+let analyses = [];
+let theme = 'light';
+
+const FLAGS = {
+  'poland':'🇵🇱','china':'🇨🇳','indonesia':'🇮🇩','thailand':'🇹🇭','south korea':'🇰🇷',
+  'japan':'🇯🇵','uae':'🇦🇪','brazil':'🇧🇷','india':'🇮🇳','mexico':'🇲🇽',
+  'saudi arabia':'🇸🇦','uk':'🇬🇧','australia':'🇦🇺','france':'🇫🇷','germany':'🇩🇪',
+  'italy':'🇮🇹','spain':'🇪🇸','turkey':'🇹🇷','egypt':'🇪🇬','nigeria':'🇳🇬',
+  'malaysia':'🇲🇾','philippines':'🇵🇭','vietnam':'🇻🇳','singapore':'🇸🇬',
+  'canada':'🇨🇦','argentina':'🇦🇷','colombia':'🇨🇴','greece':'🇬🇷',
+  'portugal':'🇵🇹','netherlands':'🇳🇱','sweden':'🇸🇪','norway':'🇳🇴',
+  'denmark':'🇩🇰','czech republic':'🇨🇿','hungary':'🇭🇺','romania':'🇷🇴',
+  'bahrain':'🇧🇭','kuwait':'🇰🇼','qatar':'🇶🇦','oman':'🇴🇲',
+  'jordan':'🇯🇴','pakistan':'🇵🇰','bangladesh':'🇧🇩','sri lanka':'🇱🇰',
+  'ghana':'🇬🇭','south africa':'🇿🇦','morocco':'🇲🇦','kenya':'🇰🇪'
+};
+
+function getFlag(c){ return FLAGS[c.toLowerCase()]||'—'; }
+
+function toggleTheme(){
+  theme = theme==='light'?'dark':'light';
+  document.documentElement.setAttribute('data-theme',theme);
+  document.getElementById('themeBtn').textContent = theme==='light'?'Dark':'Light';
+}
+
+function setCountry(name){
+  document.getElementById('countryInput').value = name;
+  document.getElementById('countryInput').scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('countryInput').focus();
+}
+
+function switchTab(name){
+  ['research','gtm','creative','assets'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===name);
+    document.getElementById('pane-'+t).classList.toggle('active',t===name);
+  });
+}
+
+function toggleCollapsible(id){
+  const body=document.getElementById('body-'+id);
+  const chevron=document.getElementById('chevron-'+id);
+  const isOpen=body.classList.contains('open');
+  body.classList.toggle('open',!isOpen);
+  chevron.classList.toggle('open',!isOpen);
+}
+
+function toggleCheck(el){ el.classList.toggle('checked'); }
+
+function toggleInclude(el){
+  el.classList.toggle('checked');
+  updateScope();
+}
+
+function toggleGroup(groupId){
+  const group=document.getElementById('group-'+groupId);
+  const items=group.querySelectorAll('.include-item');
+  const allOn=Array.from(items).every(i=>i.classList.contains('checked'));
+  items.forEach(i=>allOn?i.classList.remove('checked'):i.classList.add('checked'));
+  const btn=group.closest('.include-group').querySelector('.group-toggle');
+  if(btn) btn.textContent=allOn?'All on':'All off';
+  updateScope();
+}
+
+function updateScope(){
+  const on=document.querySelectorAll('.include-item.checked').length;
+  const total=document.querySelectorAll('.include-item').length;
+  const d=depth==='deep'?'Full':'Standard';
+  document.getElementById('scopeLabel').textContent=`${d} · ${on}/${total} modules on`;
+}
+
+function setDepth(d){
+  depth=d;
+  document.getElementById('depthStandard').classList.toggle('active',d==='standard');
+  document.getElementById('depthDeep').classList.toggle('active',d==='deep');
+  updateScope();
+}
+
+function getPartnerTypes(){
+  const labels=[];
+  document.querySelectorAll('#partnerTypes .check-item').forEach(item=>{
+    if(item.classList.contains('checked')) labels.push(item.querySelector('.check-label').textContent);
+  });
+  const custom=(document.getElementById('customPartner')?.value||'').trim();
+  if(custom) labels.push(custom);
+  return labels;
+}
+
+function buildPrompt(country,partnerTypes,depth){
+  const depthNote=depth==='deep'?'deep-dive — full report':'standard — core sections only';
+  const partnerNote=partnerTypes.length?`Priority partner categories: ${partnerTypes.join(', ')}.`:'Include all relevant franchise partner categories.';
+  const bg=`CONTEXT (do NOT output — use only to frame the research):
+TGI Fridays is actively recruiting franchise partners internationally.
+- Formats: flagship full-size, express, airport/travel hub, dark kitchen
+- Investment: $1.25M–$2.5M depending on format and market
+- Royalty: 4–6% net sales + 1–2% marketing levy
+- Onboarding: 12–18 months LOI to opening
+- IFP: F&B multi-unit operators (5+ units), PE-backed groups, hotel conglomerates, HNW family offices
+- Positioning: "In Here, It's Always Friday" — American casual dining, full bar, celebratory
+- vs Chili's: stronger bar program, more experiential, higher brand equity in Europe/Asia`.trim();
+
+  const sections=[
+    `MARKET OVERVIEW: F&B market size (USD), 5yr CAGR, GDP per capita, urban pop %, disposable income growth, eating-out frequency, casual dining penetration, international brand acceptance score 1–10, best 3 entry cities.`,
+    `INDUSTRY ANALYSIS: Casual dining sector size, 5yr CAGR, full-service vs fast-casual split, growth drivers, headwinds. Franchise law maturity, IP protection, repatriation rules, FX risk.`,
+    `MARKET TRENDS: Top 5 trends over next 24 months — consumer behaviour, premiumisation, delivery/tech, recovery status, middle-class trajectory. Cite specific data.`,
+    `OUR OPPORTUNITY: Whitespace analysis — what is unmet in American casual dining in ${country} that TGI Fridays can own. Entry format, timing, Year 1 unit target, tier (1/2/3), urgency (H/M/L), 2-paragraph positioning statement.`,
+    `CHILI'S DEEP-DIVE (Brinker Int'l): System-wide AUV, global units, int'l franchise revenue from latest annual report. FOR ${country.toUpperCase()}: Is Chili's present? Operator name, unit count, cities, weekly covers, threat level 1–5 with rationale. Unit economics comparison table vs TGI Fridays. How TGI Fridays counters each Chili's competitive advantage.`,
+    `AMERICAN CASUAL DINING CATEGORY: Profile every American casual dining brand in ${country} (Applebee's, Outback, Buffalo Wild Wings, Ruby Tuesday, Hard Rock Cafe, Denny's, others). For each present: local operator, unit count, entry year, trajectory, avg check vs TGI Fridays, threat 1–5. Conclude with category whitespace map.`,
+    `LOCAL CASUAL DINING: Top 3 homegrown full-service casual dining brands — operator, units, price tier, customer demographic, 2 competitive strengths, TGI Fridays counter-positioning angle.`,
+    `UNIT ECONOMICS: Market-specific model — AUV target (USD), food cost %, labour cost %, occupancy range (% revenue), target EBITDA margin, capex ($), payback period (months), Year 3 cash-on-cash return. Benchmark against comparable markets.`,
+    `REAL ESTATE & SITE STRATEGY: Top 5 site typologies ranked for ${country} — flagship mall, high-street, airport, hotel lobby, mixed-use. Rental benchmark (USD/sqft/yr), typical lease term, landlord incentive potential, top 3 mall landlords to approach, recommended sq ft range.`,
+    `ENTRY MODE: Compare master franchise vs area developer vs direct entity for ${country} — legal, tax, control, speed. Recommended structure with rationale. JV considerations if applicable.`,
+    `CONSUMER PERSONA: Core TGI Fridays target demographic for ${country} — age, income, lifestyle, dining frequency, brand affinity, social platforms, price sensitivity index 1–10, key occasion types.`,
+    `CULTURAL & MENU FIT: Dietary requirements (Halal %, Kosher, vegetarian), alcohol culture score 1–10, required menu adaptations, cultural occasion mapping (when do consumers celebrate with casual dining?).`,
+    `IDEAL FRANCHISE PARTNER PROFILE: Market-specific IFP — min units, capital threshold, operating structure (sub-franchise vs master), exclusivity scope, cultural fit considerations, timeline expectation.`,
+    `TARGET PARTNER DIRECTORY: 4 named prospects for ${country}.${partnerTypes.length?` Focus: ${partnerTypes.join(', ')}.`:''} For each: company, HQ, revenue, brands, locations, IFP fit rationale, key contact (name + title + LinkedIn), personalised outreach angle.`,
+    `EVENTS CALENDAR: 6 global franchise expos + 4 ${country}-specific events in next 12 months. Date, city, attendance, relevance, recommended TGI presence (attend/exhibit/speak).`,
+    `FRANCHISE BROKER NETWORK: Top 3 local franchise consultants/brokers in ${country} — firm, contact, typical deal flow, commission structure, track record with int'l restaurant brands, recommended approach.`,
+    `GOVERNMENT & TRADE SUPPORT: Available support from trade bodies, investment promotion agencies, embassy commercial sections. Grants, incentives, or soft-landing programs for foreign F&B brands entering ${country}.`,
+    `CHANNEL PRIORITY MAP: Rank channels for reaching franchise partners in ${country} — LinkedIn, franchise expos, local brokers, PR, WhatsApp, paid LinkedIn. Reach score, cost/lead, conversion likelihood, recommended monthly budget. Conclude with top 3 budget allocation.`,
+    `OUTREACH SEQUENCES (5-TOUCH): Personalised to the #1 target partner for ${country}: cold email, day 5 follow-up, day 12 pattern-interrupt, LinkedIn InMail, WhatsApp voice note script. Reference specific business details. 2 A/B subject lines per email.`,
+    `AUTOMATED STACK: $400–800/mo setup — Apollo.io + Clay + LinkedIn Sales Navigator + Instantly.ai + HubSpot. 6-touch cadence calendar, trigger logic, A/B subject lines, CRM pipeline stages, performance benchmarks (open rate, reply rate, meeting booked rate).`,
+    `CREATIVE DIRECTION BRIEF: Market-specific — photography style, OOH vs digital split, tone adaptation B2B vs B2C, platform priorities, cultural sensitivities, successful int'l restaurant brand campaign references for ${country}.`,
+    `LOCALISED B2B MESSAGING — English THEN local language directly below for each: LinkedIn InMail opener (150 words), 3 email subject line variants, WhatsApp intro (3 sentences), 30-second event pitch. Adapt tone to ${country}'s business culture.`,
+    `BILINGUAL SOCIAL COPY — English then local language for: 3 LinkedIn posts (B2B franchise audience), 3 Instagram captions (brand awareness), 3 Facebook posts (local business owner). Platform hashtag sets in both languages.`,
+    `CAMPAIGN CONCEPTS: 3 B2B franchise recruitment campaigns for ${country}: digital/LinkedIn, event-activation, PR/earned media. Campaign name, core message, audience, channel, mechanics, 3-month budget range, expected qualified leads.`,
+    `RISK REGISTER: Top 5 franchise development risks for ${country} — likelihood (H/M/L), impact (H/M/L), specific mitigation action.`,
+    `30–60 DAY ACTION PLAN: Concrete next steps with owner role and specific deadline. Minimum 8 actions.`,
+  ].join('\n\n');
+
+  return `${bg}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FRANCHISE MARKET ANALYSIS
+Country: ${country.toUpperCase()}
+Depth: ${depthNote}
+${partnerNote}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Do NOT output a TGI Fridays brand introduction. Begin directly with the research.
+Use live web searches for all market data. Cite source and year for all figures. All values in USD.
+
+${sections}
+
+After completing the full analysis, save the report as: TGI_Fridays_${country.replace(/\s+/g,'_')}_Franchise_Strategy.docx`;
+}
+
+const STEPS=[
+  'Researching market size, GDP & consumer dynamics',
+  'Analysing American casual dining category — all competitors',
+  'Mapping Chili\'s (Brinker) performance & local operator',
+  'Identifying and profiling target franchise partners',
+  'Building GTM strategy, channel map & outreach sequences',
+  'Generating bilingual creative & localised messaging',
+];
+
+function showActive(country){
+  document.getElementById('welcomeCard').style.display='none';
+  const ac=document.getElementById('activeCard');
+  ac.style.display='block';
+  document.getElementById('activeFlag').textContent=getFlag(country);
+  document.getElementById('activeCountryName').textContent=country;
+  document.getElementById('activeStatusText').textContent='Building analysis — 2–4 minutes';
+  const el=document.getElementById('progressSteps');
+  el.innerHTML=STEPS.map((s,i)=>`
+    <div class="progress-step" id="step${i}">
+      <div class="step-icon ${i===0?'step-active':'step-pending'}">${i===0?'→':i+1}</div>
+      <span class="${i===0?'step-label-active':'step-label'}">${s}</span>
+    </div>`).join('');
+  let step=0;
+  const iv=setInterval(()=>{
+    if(step<STEPS.length-1){
+      const prev=document.getElementById('step'+step);
+      if(prev){prev.querySelector('.step-icon').className='step-icon step-done';prev.querySelector('.step-icon').textContent='✓';prev.querySelector('span').className='step-label';}
+      step++;
+      const next=document.getElementById('step'+step);
+      if(next){next.querySelector('.step-icon').className='step-icon step-active';next.querySelector('.step-icon').textContent='→';next.querySelector('span').className='step-label-active';}
+    } else {
+      clearInterval(iv);
+      const c=document.getElementById('countryInput').value.trim();
+      document.getElementById('activeSpinner').style.display='none';
+      document.getElementById('activeStatusText').textContent='Sent — scroll down in chat to see the analysis building';
+      const last=document.getElementById('step'+step);
+      if(last){last.querySelector('.step-icon').className='step-icon step-done';last.querySelector('.step-icon').textContent='✓';last.querySelector('span').className='step-label';}
+      const da=document.getElementById('driveActions');
+      const fname='TGI_Fridays_'+c.replace(/\s+/g,'_')+'_Franchise_Strategy.docx';
+      da.dataset.country=c; da.dataset.fname=fname;
+      da.classList.add('visible');
+      window._lastDocPath='/Users/ahmedhany/Documents/Claude/Projects/TGI/'+fname;
+      window._lastDocCountry=c;
+      addToHistory(c);
+      document.getElementById('generateBtn').disabled=false;
+      document.getElementById('generateBtn').innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M13 3L4 14h7l-2 7 9-11h-7z"/></svg> Generate Another Analysis`;
+    }
+  },1900);
+}
+
+function generate(){
+  const country=document.getElementById('countryInput').value.trim();
+  if(!country){
+    document.getElementById('countryInput').focus();
+    document.getElementById('countryInput').style.borderColor='var(--red)';
+    setTimeout(()=>document.getElementById('countryInput').style.borderColor='',1500);
+    return;
+  }
+  const prompt=buildPrompt(country,getPartnerTypes(),depth);
+  document.getElementById('generateBtn').disabled=true;
+  showActive(country);
+  if(typeof sendPrompt==='function') sendPrompt(prompt);
+}
+
+function generateGTM(){
+  const country=document.getElementById('countryInput').value.trim();
+  if(!country){
+    document.getElementById('countryInput').focus();
+    document.getElementById('countryInput').style.borderColor='var(--red)';
+    setTimeout(()=>document.getElementById('countryInput').style.borderColor='',1500);
+    return;
+  }
+  const partnerTypes=getPartnerTypes();
+  const partnerNote=partnerTypes.length?`Priority partner categories: ${partnerTypes.join(', ')}.`:'Include all relevant franchise partner categories.';
+  const prompt=`CONTEXT (do NOT output):
+TGI Fridays international franchise recruitment. Investment $1.25M–$2.5M, royalty 4–6%, IFP: F&B multi-unit operators, PE-backed groups, hotel conglomerates, HNW family offices.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GTM & PARTNER OUTREACH — ${country.toUpperCase()}
+${partnerNote}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Use live web research. All values in USD. Begin directly with the content — no intro.
+
+IDEAL FRANCHISE PARTNER PROFILE: Market-specific IFP — min units, capital threshold, operating structure (sub-franchise vs master), exclusivity scope, timeline expectation.
+
+TARGET PARTNER DIRECTORY: 4 named prospects for ${country}.${partnerTypes.length?` Focus: ${partnerTypes.join(', ')}.`:''} For each: company, HQ, revenue, brands operated, IFP fit rationale, key contact (name + title + LinkedIn), personalised outreach angle.
+
+EVENTS CALENDAR: 6 global franchise expos + 4 ${country}-specific events in the next 12 months. Date, city, relevance, recommended TGI presence (attend/exhibit/speak).
+
+FRANCHISE BROKER NETWORK: Top 3 local franchise consultants/brokers in ${country} — firm, contact, deal flow, commission structure, track record with int'l restaurant brands.
+
+GOVERNMENT & TRADE SUPPORT: Trade bodies, investment promotion agencies, embassy commercial sections. Available grants or incentives for foreign F&B brands entering ${country}.
+
+CHANNEL PRIORITY MAP: Rank B2B franchise recruitment channels — LinkedIn, expos, brokers, PR, WhatsApp, paid LinkedIn. Reach score, cost/lead, conversion likelihood, recommended monthly budget split.
+
+OUTREACH SEQUENCES (5-TOUCH): Personalised to the #1 target partner: cold email, day 5 follow-up, day 12 pattern-interrupt, LinkedIn InMail, WhatsApp voice note script. 2 A/B subject lines per email.
+
+AUTOMATED STACK: $400–800/mo — Apollo.io + Clay + LinkedIn Sales Navigator + Instantly.ai + HubSpot. 6-touch cadence, trigger logic, CRM pipeline stages, performance benchmarks.
+
+30-DAY ACTION PLAN: Minimum 6 concrete actions with owner role and deadline.
+
+After completing, save as: TGI_Fridays_${country.replace(/\s+/g,'_')}_GTM.docx`;
+  showActive(country);
+  if(typeof sendPrompt==='function') sendPrompt(prompt);
+}
+
+function generateCreative(){
+  const country=document.getElementById('countryInput').value.trim();
+  if(!country){
+    document.getElementById('countryInput').focus();
+    document.getElementById('countryInput').style.borderColor='var(--red)';
+    setTimeout(()=>document.getElementById('countryInput').style.borderColor='',1500);
+    return;
+  }
+  const prompt=`CONTEXT (do NOT output):
+TGI Fridays international franchise recruitment. Positioning: "In Here, It's Always Friday" — American casual dining, full bar, celebratory occasion. Recruiting franchise partners in ${country}.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CREATIVE BRIEF — ${country.toUpperCase()}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Use live research for cultural context. Produce all copy in English THEN the local language of ${country} directly below each piece. Begin directly — no intro.
+
+CULTURAL & CONSUMER CONTEXT: Alcohol culture score (1–10), dining occasion norms, platform usage by demographic, formality norms in B2B communication, cultural sensitivities to observe.
+
+CREATIVE DIRECTION BRIEF: Photography style, OOH vs digital split, tone adaptation for B2B franchise pitch vs B2C consumer, platform priorities, colour/aesthetic considerations for ${country}.
+
+LOCALISED B2B MESSAGING (EN + local language):
+- LinkedIn InMail opener (150 words) — targeting franchise investors
+- 3 cold email subject line variants
+- WhatsApp intro message (3 sentences)
+- 30-second in-person event pitch script
+
+SOCIAL & DIGITAL COPY — BILINGUAL (EN + local language):
+- 3 LinkedIn posts targeting franchise prospects
+- 3 Instagram captions (brand awareness, aspirational)
+- 3 Facebook posts targeting local business owners
+- Platform-appropriate hashtag sets in both languages
+
+CAMPAIGN CONCEPTS (3):
+1. Digital/LinkedIn — franchise investor targeting
+2. Event activation — franchise expo or industry event
+3. PR/Earned media — local business press angle
+For each: campaign name, core message, audience, channel, mechanics, 3-month budget range, expected qualified leads.
+
+After completing, save as: TGI_Fridays_${country.replace(/\s+/g,'_')}_Creative_Brief.docx`;
+  showActive(country);
+  if(typeof sendPrompt==='function') sendPrompt(prompt);
+}
+
+document.getElementById('countryInput').addEventListener('keydown',e=>{if(e.key==='Enter') generate();});
+
+function addToHistory(country){
+  const fname='TGI_Fridays_'+country.replace(/\s+/g,'_')+'_Franchise_Strategy.docx';
+  const rawPath='/Users/ahmedhany/Documents/Claude/Projects/TGI/'+fname;
+  analyses.unshift({id:'h'+Date.now(),country,flag:getFlag(country),time:new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),date:new Date().toLocaleDateString([],{month:'short',day:'numeric'}),localRawPath:rawPath,fname,ready:false});
+  renderHistory();
+}
+
+function renderHistory(){
+  const body=document.getElementById('historyBody');
+  if(!analyses.length){body.innerHTML='<div class="history-empty">No analyses yet. Select a market above to begin.</div>';return;}
+  body.innerHTML=analyses.map(a=>`
+    <div class="history-item" id="hitem_${a.id}">
+      <div class="history-item-top" onclick="setCountryOnly('${a.country}')">
+        <div class="history-flag">${a.flag}</div>
+        <div style="flex:1;min-width:0;"><div class="history-country">${a.country}</div><div class="history-meta">${a.date} · ${a.time}</div></div>
+        <span class="history-badge ${a.ready?'badge-ready':'badge-pending'}">${a.ready?'Ready':'Building'}</span>
+      </div>
+      <div class="history-links">
+        ${a.ready?`<button class="hlink hlink-doc" onclick="openFile('${a.localRawPath}')">Open .docx</button>`:`<span class="hlink hlink-pending">Generating…</span><button class="hlink hlink-ready" onclick="markReady('${a.id}')">Mark ready</button>`}
+      </div>
+    </div>`).join('');
+}
+
+function setCountryOnly(name){ document.getElementById('countryInput').value=name; }
+function markReady(id){ const e=analyses.find(a=>a.id===id); if(e){e.ready=true;renderHistory();} }
+function openFile(path){ if(typeof sendPrompt==='function') sendPrompt(`[OPEN]: ${path}`); }
+function openDocFromCard(){ if(window._lastDocPath) openFile(window._lastDocPath); }
+function uploadToDrive(){
+  const da=document.getElementById('driveActions');
+  const c=da.dataset.country||document.getElementById('countryInput').value.trim();
+  const fname=da.dataset.fname||('TGI_Fridays_'+c.replace(/\s+/g,'_')+'_Franchise_Strategy.docx');
+  const path='/Users/ahmedhany/Documents/Claude/Projects/TGI/'+fname;
+  if(typeof sendPrompt==='function') sendPrompt(`Please upload the file at this path to Google Drive: ${path}\n\nUpload to a folder called "TGI Fridays — Franchise Development" (create if needed). Share the link here once uploaded.`);
+  const btn=document.querySelector('.drive-btn-blue');
+  btn.textContent='Uploading — check chat'; btn.disabled=true;
+}
+
+updateScope();
+</script>
+</body>
+</html>
