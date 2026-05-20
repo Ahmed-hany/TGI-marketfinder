@@ -169,12 +169,17 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
 .active-status{font-size:12px;color:var(--text2);margin-top:4px;display:flex;align-items:center;gap:6px;}
 .spinner{width:12px;height:12px;border:2px solid var(--divider);border-top-color:var(--red);border-radius:50%;animation:spin 0.8s linear infinite;display:inline-block;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.progress-steps{margin-top:14px;display:flex;flex-direction:column;gap:8px;}
-.progress-step{display:flex;align-items:center;gap:10px;}
-.step-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;flex-shrink:0;}
-.step-pending{background:var(--surface2);color:var(--text3);border:1px solid var(--border2);}
-.step-active{background:var(--red);color:#fff;}
-.step-done{background:var(--green);color:#fff;}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.5;transform:scale(0.75);}}
+.status-panel{margin-top:14px;border-radius:10px;overflow:hidden;}
+.status-working{background:rgba(232,25,44,0.06);border:1px solid rgba(232,25,44,0.2);padding:14px 16px;}
+.status-done{background:rgba(52,199,89,0.07);border:1px solid rgba(52,199,89,0.25);padding:14px 16px;}
+.status-pulse{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse-dot 1.2s ease-in-out infinite;flex-shrink:0;}
+.pulse-dot-green{background:var(--green);animation:none;}
+.status-label{font-size:12px;font-weight:700;color:var(--text);}
+.status-instruction{font-size:11px;color:var(--text2);line-height:1.6;margin-bottom:10px;}
+.status-modules{display:flex;flex-wrap:wrap;gap:4px;}
+.status-mod{font-size:10px;padding:2px 7px;border-radius:10px;background:var(--surface);border:1px solid var(--border2);color:var(--text3);}
 .step-label{font-size:11px;color:var(--text3);}
 .step-label-active{font-size:11px;color:var(--text);font-weight:500;}
 .drive-wrap{display:none;margin-top:14px;gap:8px;}
@@ -479,7 +484,7 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
             </div>
           </div>
         </div>
-        <div class="progress-steps" id="progressSteps"></div>
+        <div id="progressSteps"></div>
         <div class="drive-wrap" id="driveActions">
           <button class="drive-btn drive-btn-blue" onclick="uploadToDrive()">Save to Google Drive</button>
           <button class="drive-btn drive-btn-ghost" onclick="openDocFromCard()">Open .docx</button>
@@ -892,13 +897,12 @@ ${sections}
 After completing the full analysis, save the report as: TGI_Fridays_${country.replace(/\s+/g,'_')}_Franchise_Strategy.docx`;
 }
 
-const STEPS=[
-  'Researching market size, GDP & consumer dynamics',
-  'Analysing American casual dining category — all competitors',
-  'Mapping Chili\'s (Brinker) performance & local operator',
-  'Identifying and profiling target franchise partners',
-  'Building GTM strategy, channel map & outreach sequences',
-  'Generating bilingual creative & localised messaging',
+const MODULES_WORKING=[
+  'Market Overview','Industry Analysis','Market Trends','Our Opportunity',
+  'Chili\'s Deep Dive','Category Competitors','Local Casual Dining',
+  'Unit Economics','Real Estate & Site','Entry Mode',
+  'Consumer Persona','Cultural Fit','Partner Directory',
+  'Outreach Sequences','Creative Brief'
 ];
 
 function showActive(country){
@@ -907,39 +911,32 @@ function showActive(country){
   ac.style.display='block';
   document.getElementById('activeFlag').textContent=getFlag(country);
   document.getElementById('activeCountryName').textContent=country;
-  document.getElementById('activeStatusText').textContent='Building analysis — 2–4 minutes';
+  document.getElementById('activeStatusText').textContent='Prompt sent to Claude';
+  document.getElementById('activeSpinner').style.display='none';
   const el=document.getElementById('progressSteps');
-  el.innerHTML=STEPS.map((s,i)=>`
-    <div class="progress-step" id="step${i}">
-      <div class="step-icon ${i===0?'step-active':'step-pending'}">${i===0?'→':i+1}</div>
-      <span class="${i===0?'step-label-active':'step-label'}">${s}</span>
-    </div>`).join('');
-  let step=0;
-  const iv=setInterval(()=>{
-    if(step<STEPS.length-1){
-      const prev=document.getElementById('step'+step);
-      if(prev){prev.querySelector('.step-icon').className='step-icon step-done';prev.querySelector('.step-icon').textContent='✓';prev.querySelector('span').className='step-label';}
-      step++;
-      const next=document.getElementById('step'+step);
-      if(next){next.querySelector('.step-icon').className='step-icon step-active';next.querySelector('.step-icon').textContent='→';next.querySelector('span').className='step-label-active';}
-    } else {
-      clearInterval(iv);
-      const c=document.getElementById('countryInput').value.trim();
-      document.getElementById('activeSpinner').style.display='none';
-      document.getElementById('activeStatusText').textContent='Sent — scroll down in chat to see the analysis building';
-      const last=document.getElementById('step'+step);
-      if(last){last.querySelector('.step-icon').className='step-icon step-done';last.querySelector('.step-icon').textContent='✓';last.querySelector('span').className='step-label';}
-      const da=document.getElementById('driveActions');
-      const fname='TGI_Fridays_'+c.replace(/\s+/g,'_')+'_Franchise_Strategy.docx';
-      da.dataset.country=c; da.dataset.fname=fname;
-      da.classList.add('visible');
-      window._lastDocPath='/Users/ahmedhany/Documents/Claude/Projects/TGI/'+fname;
-      window._lastDocCountry=c;
-      addToHistory(c);
-      document.getElementById('generateBtn').disabled=false;
-      document.getElementById('generateBtn').innerHTML=`<svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M13 3L4 14h7l-2 7 9-11h-7z"/></svg> Generate Another Analysis`;
-    }
-  },1900);
+  el.innerHTML=`
+    <div class="status-panel">
+      <div class="status-working">
+        <div class="status-pulse">
+          <div class="pulse-dot"></div>
+          <span class="status-label">Claude is researching ${country} now</span>
+        </div>
+        <div class="status-instruction">
+          Switch to the <strong>chat below</strong> to watch Claude build your report live.
+          Takes <strong>2–4 minutes</strong> for a full analysis — all 15 modules are being researched in real time. Your .docx will be saved automatically to the <strong>Assets tab</strong> when complete.
+        </div>
+        <div class="status-modules">${MODULES_WORKING.map(m=>`<span class="status-mod">${m}</span>`).join('')}</div>
+      </div>
+    </div>`;
+  const c=document.getElementById('countryInput').value.trim();
+  const fname='TGI_Fridays_'+c.replace(/\s+/g,'_')+'_Franchise_Strategy.docx';
+  const da=document.getElementById('driveActions');
+  da.dataset.country=c; da.dataset.fname=fname;
+  da.classList.add('visible');
+  window._lastDocPath='/Users/ahmedhany/Documents/Claude/Projects/TGI/'+fname;
+  window._lastDocCountry=c;
+  addToHistory(c);
+  document.getElementById('generateBtn').disabled=false;
 }
 
 function generate(){
