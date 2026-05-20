@@ -35,6 +35,38 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
 .header-badge{font-size:10px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--text3);border:1px solid var(--divider);border-radius:4px;padding:3px 8px;}
 .theme-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:600;color:var(--text2);letter-spacing:0.04em;text-transform:uppercase;transition:all 0.15s;}
 .theme-btn:hover{border-color:var(--red);color:var(--red);}
+.settings-btn{background:var(--surface2);border:1px solid var(--border2);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:600;color:var(--text2);transition:all 0.15s;display:flex;align-items:center;gap:5px;}
+.settings-btn:hover{border-color:var(--red);color:var(--red);}
+.api-dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex-shrink:0;}
+.api-dot.connected{background:var(--green);}
+
+/* ─── MODAL ─── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.hidden{display:none;}
+.modal-box{background:var(--surface);border-radius:16px;padding:28px;width:420px;max-width:90vw;box-shadow:var(--shadow-md);}
+.modal-title{font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.modal-sub{font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.5;}
+.modal-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:0.05em;}
+.modal-input{width:100%;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border2);border-radius:8px;font-size:13px;color:var(--text);outline:none;font-family:monospace;margin-bottom:16px;}
+.modal-input:focus{border-color:var(--red);}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end;}
+.modal-btn{padding:8px 18px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all 0.15s;}
+.modal-btn-primary{background:var(--red);color:#fff;}
+.modal-btn-primary:hover{background:var(--red-hover);}
+.modal-btn-ghost{background:var(--surface2);color:var(--text2);border:1px solid var(--border2);}
+.modal-btn-ghost:hover{border-color:var(--red);color:var(--red);}
+.modal-hint{font-size:11px;color:var(--text3);margin-bottom:16px;padding:8px 10px;background:var(--surface2);border-radius:6px;line-height:1.5;}
+
+/* ─── RESULTS PANEL ─── */
+.results-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:14px;overflow:hidden;display:none;}
+.results-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--divider);background:var(--surface2);}
+.results-title{font-size:12px;font-weight:700;color:var(--text);}
+.results-actions{display:flex;gap:6px;}
+.results-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text2);transition:all 0.15s;}
+.results-btn:hover{border-color:var(--red);color:var(--red);}
+.results-body{padding:16px;max-height:500px;overflow-y:auto;font-size:12px;line-height:1.7;color:var(--text);white-space:pre-wrap;font-family:-apple-system,sans-serif;}
+.results-cursor{display:inline-block;width:2px;height:14px;background:var(--red);animation:blink 0.8s step-end infinite;vertical-align:middle;margin-left:1px;}
+@keyframes blink{50%{opacity:0;}}
 
 /* ─── MISSION BANNER ─── */
 .mission-banner{background:#1A1A1A;border-bottom:3px solid var(--red);padding:24px 28px 20px;}
@@ -342,6 +374,9 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
     <span class="header-title">Franchise Development Intelligence</span>
   </div>
   <div class="header-right">
+    <button class="settings-btn" id="settingsBtn" onclick="openSettings()">
+      <span class="api-dot" id="apiDot"></span>API Key
+    </button>
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">Dark</button>
     <span class="header-badge">Internal Use Only</span>
   </div>
@@ -713,8 +748,38 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
       </div>
     </div>
 
+    <!-- RESULTS PANEL (API mode) -->
+    <div class="results-panel" id="resultsPanel">
+      <div class="results-header">
+        <span class="results-title" id="resultsPanelTitle">Analysis Results</span>
+        <div class="results-actions">
+          <button class="results-btn" onclick="copyResults()">Copy</button>
+          <button class="results-btn" onclick="downloadResults()">Download .txt</button>
+        </div>
+      </div>
+      <div class="results-body" id="resultsBody"></div>
+    </div>
+
   </div><!-- /right -->
 </div><!-- /layout -->
+
+<!-- ══ API KEY MODAL ══ -->
+<div class="modal-overlay hidden" id="settingsModal" onclick="closeSettingsOutside(event)">
+  <div class="modal-box">
+    <div class="modal-title">Claude API Key</div>
+    <div class="modal-sub">Enter your Anthropic API key to run analyses directly from this dashboard — without needing Cowork or the Claude app.</div>
+    <div class="modal-hint">🔒 Your key is stored only in your browser (localStorage) and never sent anywhere except directly to Anthropic's API.</div>
+    <label class="modal-label">Anthropic API Key</label>
+    <input class="modal-input" id="apiKeyInput" type="password" placeholder="sk-ant-api03-..." />
+    <div style="font-size:11px;color:var(--text3);margin-bottom:16px;">
+      Get your key at <a href="https://console.anthropic.com/settings/keys" target="_blank" style="color:var(--red);">console.anthropic.com</a>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn modal-btn-ghost" onclick="closeSettings()">Cancel</button>
+      <button class="modal-btn modal-btn-primary" onclick="saveApiKey()">Save & Connect</button>
+    </div>
+  </div>
+</div>
 
 <!-- ══ FOOTER MARKET TABS ══ -->
 <div class="footer-markets">
@@ -950,7 +1015,7 @@ function generate(){
   const prompt=buildPrompt(country,getPartnerTypes(),depth);
   document.getElementById('generateBtn').disabled=true;
   showActive(country);
-  if(typeof sendPrompt==='function') sendPrompt(prompt);
+  smartSend(prompt, `Full Analysis — ${country}`);
 }
 
 function generateGTM(){
@@ -993,7 +1058,7 @@ AUTOMATED STACK: $400–800/mo — Apollo.io + Clay + LinkedIn Sales Navigator +
 
 After completing, save as: TGI_Fridays_${country.replace(/\s+/g,'_')}_GTM.docx`;
   showActive(country);
-  if(typeof sendPrompt==='function') sendPrompt(prompt);
+  smartSend(prompt, `GTM Strategy — ${country}`);
 }
 
 function generateCreative(){
@@ -1037,7 +1102,7 @@ For each: campaign name, core message, audience, channel, mechanics, 3-month bud
 
 After completing, save as: TGI_Fridays_${country.replace(/\s+/g,'_')}_Creative_Brief.docx`;
   showActive(country);
-  if(typeof sendPrompt==='function') sendPrompt(prompt);
+  smartSend(prompt, `Creative Brief — ${country}`);
 }
 
 document.getElementById('countryInput').addEventListener('keydown',e=>{if(e.key==='Enter') generate();});
@@ -1080,6 +1145,122 @@ function uploadToDrive(){
 }
 
 updateScope();
+
+/* ─── API KEY SETTINGS ─── */
+function checkApiKey(){
+  const key = localStorage.getItem('anthropic_api_key');
+  const dot = document.getElementById('apiDot');
+  if(dot) dot.className = 'api-dot' + (key ? ' connected' : '');
+}
+function openSettings(){
+  const key = localStorage.getItem('anthropic_api_key')||'';
+  document.getElementById('apiKeyInput').value = key;
+  document.getElementById('settingsModal').classList.remove('hidden');
+}
+function closeSettings(){ document.getElementById('settingsModal').classList.add('hidden'); }
+function closeSettingsOutside(e){ if(e.target===document.getElementById('settingsModal')) closeSettings(); }
+function saveApiKey(){
+  const val = document.getElementById('apiKeyInput').value.trim();
+  if(val){ localStorage.setItem('anthropic_api_key', val); }
+  else { localStorage.removeItem('anthropic_api_key'); }
+  checkApiKey();
+  closeSettings();
+}
+checkApiKey();
+
+/* ─── RESULTS PANEL ─── */
+let _resultsText = '';
+function showResultsPanel(title){
+  const p = document.getElementById('resultsPanel');
+  p.style.display = 'block';
+  document.getElementById('resultsPanelTitle').textContent = title || 'Analysis Results';
+  document.getElementById('resultsBody').innerHTML = '<span class="results-cursor"></span>';
+  _resultsText = '';
+  p.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function appendResults(text){
+  _resultsText += text;
+  const body = document.getElementById('resultsBody');
+  body.innerHTML = _resultsText.replace(/\n/g,'<br>') + '<span class="results-cursor"></span>';
+  body.scrollTop = body.scrollHeight;
+}
+function finaliseResults(){
+  const body = document.getElementById('resultsBody');
+  body.innerHTML = _resultsText.replace(/\n/g,'<br>');
+}
+function copyResults(){ navigator.clipboard.writeText(_resultsText).then(()=>alert('Copied!')); }
+function downloadResults(){
+  const country = document.getElementById('countryInput').value.trim().replace(/\s+/g,'_') || 'Analysis';
+  const title = document.getElementById('resultsPanelTitle').textContent.replace(/\s+/g,'_');
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(_resultsText);
+  a.download = `TGI_Fridays_${country}_${title}.txt`;
+  a.click();
+}
+
+/* ─── CLAUDE API CALL ─── */
+async function callClaude(prompt, panelTitle){
+  const apiKey = localStorage.getItem('anthropic_api_key');
+  if(!apiKey){ openSettings(); return; }
+
+  showResultsPanel(panelTitle);
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-6',
+        max_tokens: 8000,
+        stream: true,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if(!res.ok){
+      const err = await res.json();
+      appendResults('\n\nError: ' + (err.error?.message || res.statusText));
+      finaliseResults();
+      return;
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    while(true){
+      const { done, value } = await reader.read();
+      if(done) break;
+      const lines = decoder.decode(value).split('\n');
+      for(const line of lines){
+        if(line.startsWith('data: ')){
+          try {
+            const d = JSON.parse(line.slice(6));
+            if(d.type==='content_block_delta' && d.delta?.text){
+              appendResults(d.delta.text);
+            }
+          } catch(e){}
+        }
+      }
+    }
+    finaliseResults();
+  } catch(err){
+    appendResults('\n\nConnection error: ' + err.message);
+    finaliseResults();
+  }
+}
+
+/* ─── SMART GENERATE (Cowork OR API) ─── */
+function smartSend(prompt, panelTitle){
+  if(typeof sendPrompt === 'function'){
+    sendPrompt(prompt); // Cowork mode
+  } else {
+    callClaude(prompt, panelTitle); // Vercel / standalone mode
+  }
+}
 </script>
 </body>
 </html>
