@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TGI Fridays — Franchise Development Intelligence</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
 <style>
 :root {
   --red:#E8192C; --red-hover:#C4141F;
@@ -64,7 +65,27 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
 .results-actions{display:flex;gap:6px;}
 .results-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text2);transition:all 0.15s;}
 .results-btn:hover{border-color:var(--red);color:var(--red);}
-.results-body{padding:16px;max-height:500px;overflow-y:auto;font-size:12px;line-height:1.7;color:var(--text);white-space:pre-wrap;font-family:-apple-system,sans-serif;}
+.results-body{padding:24px 28px;max-height:72vh;overflow-y:auto;font-size:13px;line-height:1.75;color:var(--text);}
+.results-body h1{font-size:22px;font-weight:700;color:var(--red);margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid var(--red);}
+.results-body h2{font-size:17px;font-weight:700;color:var(--text);margin:28px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--divider);}
+.results-body h3{font-size:14px;font-weight:700;color:var(--red);margin:18px 0 8px;}
+.results-body h4{font-size:13px;font-weight:700;color:var(--text);margin:14px 0 6px;}
+.results-body p{margin:0 0 10px;}
+.results-body strong{font-weight:700;color:var(--text);}
+.results-body em{font-style:italic;}
+.results-body ul,.results-body ol{margin:8px 0 14px 22px;padding:0;}
+.results-body li{margin-bottom:5px;line-height:1.6;}
+.results-body table{width:100%;border-collapse:collapse;margin:14px 0;font-size:12px;border-radius:8px;overflow:hidden;box-shadow:0 0 0 1px var(--border2);}
+.results-body table th{background:var(--red);color:#fff;padding:9px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;}
+.results-body table td{padding:9px 14px;border-bottom:1px solid var(--border);vertical-align:top;}
+.results-body table tr:last-child td{border-bottom:none;}
+.results-body table tr:nth-child(even) td{background:var(--surface2);}
+.results-body hr{border:none;border-top:1px solid var(--divider);margin:22px 0;}
+.results-body code{background:var(--surface2);padding:2px 6px;border-radius:4px;font-size:11px;font-family:monospace;border:1px solid var(--border);}
+.results-body pre{background:var(--surface2);padding:14px;border-radius:8px;overflow-x:auto;margin:12px 0;border:1px solid var(--border);}
+.results-body pre code{background:none;border:none;padding:0;font-size:12px;}
+.results-body blockquote{border-left:3px solid var(--red);margin:14px 0;padding:10px 16px;background:rgba(232,25,44,0.04);color:var(--text2);border-radius:0 6px 6px 0;}
+.results-streaming{white-space:pre-wrap;font-family:-apple-system,sans-serif;}
 .results-cursor{display:inline-block;width:2px;height:14px;background:var(--red);animation:blink 0.8s step-end infinite;vertical-align:middle;margin-left:1px;}
 @keyframes blink{50%{opacity:0;}}
 
@@ -521,8 +542,8 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
         </div>
         <div id="progressSteps"></div>
         <div class="drive-wrap" id="driveActions">
-          <button class="drive-btn drive-btn-blue" onclick="uploadToDrive()">Save to Google Drive</button>
-          <button class="drive-btn drive-btn-ghost" onclick="openDocFromCard()">Open .docx</button>
+          <button class="drive-btn drive-btn-blue" id="saveDriveBtn" onclick="uploadToDrive()">Save to Google Drive</button>
+          <button class="drive-btn drive-btn-ghost" id="openDocBtn" onclick="openDocFromCard()">Open .docx</button>
         </div>
       </div>
     </div>
@@ -753,8 +774,8 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
       <div class="results-header">
         <span class="results-title" id="resultsPanelTitle">Analysis Results</span>
         <div class="results-actions">
-          <button class="results-btn" onclick="copyResults()">Copy</button>
-          <button class="results-btn" onclick="downloadResults()">Download .txt</button>
+          <button class="results-btn" onclick="copyResults()">Copy Text</button>
+          <button class="results-btn" onclick="downloadResults()">Download .html</button>
         </div>
       </div>
       <div class="results-body" id="resultsBody"></div>
@@ -1132,17 +1153,61 @@ function renderHistory(){
 
 function setCountryOnly(name){ document.getElementById('countryInput').value=name; }
 function markReady(id){ const e=analyses.find(a=>a.id===id); if(e){e.ready=true;renderHistory();} }
-function openFile(path){ if(typeof sendPrompt==='function') sendPrompt(`[OPEN]: ${path}`); }
-function openDocFromCard(){ if(window._lastDocPath) openFile(window._lastDocPath); }
+function openFile(path){
+  if(typeof sendPrompt==='function'){
+    sendPrompt(`[OPEN]: ${path}`);
+  } else {
+    // Vercel / standalone: download generated results as HTML
+    if(_resultsText){
+      downloadResults();
+    } else {
+      const name = path.split('/').pop();
+      alert('File stored locally: ' + name + '\n\nGenerate an analysis first, then use "Download .html" to save results.');
+    }
+  }
+}
+function openDocFromCard(){
+  if(typeof sendPrompt==='function'){
+    if(window._lastDocPath) sendPrompt(`[OPEN]: ${window._lastDocPath}`);
+  } else {
+    // Vercel: download the results
+    if(_resultsText){
+      downloadResults();
+    } else {
+      alert('Run an analysis first, then download your results using the Download button.');
+    }
+  }
+}
 function uploadToDrive(){
   const da=document.getElementById('driveActions');
   const c=da.dataset.country||document.getElementById('countryInput').value.trim();
-  const fname=da.dataset.fname||('TGI_Fridays_'+c.replace(/\s+/g,'_')+'_Franchise_Strategy.docx');
-  const path='/Users/ahmedhany/Documents/Claude/Projects/TGI/'+fname;
-  if(typeof sendPrompt==='function') sendPrompt(`Please upload the file at this path to Google Drive: ${path}\n\nUpload to a folder called "TGI Fridays — Franchise Development" (create if needed). Share the link here once uploaded.`);
-  const btn=document.querySelector('.drive-btn-blue');
-  btn.textContent='Uploading — check chat'; btn.disabled=true;
+  if(typeof sendPrompt==='function'){
+    const fname=da.dataset.fname||('TGI_Fridays_'+c.replace(/\s+/g,'_')+'_Franchise_Strategy.docx');
+    const path='/Users/ahmedhany/Documents/Claude/Projects/TGI/'+fname;
+    sendPrompt(`Please upload the file at this path to Google Drive: ${path}\n\nUpload to a folder called "TGI Fridays — Franchise Development" (create if needed). Share the link here once uploaded.`);
+    const btn=document.getElementById('saveDriveBtn');
+    btn.textContent='Uploading — check chat'; btn.disabled=true;
+  } else {
+    // Vercel: download results as a formatted HTML report
+    if(_resultsText){
+      downloadResults();
+    } else {
+      alert('Run an analysis first to generate results for download.');
+    }
+  }
 }
+
+function initContextButtons(){
+  const isCowork = typeof sendPrompt === 'function';
+  if(!isCowork){
+    const saveBtn = document.getElementById('saveDriveBtn');
+    const openBtn = document.getElementById('openDocBtn');
+    if(saveBtn) saveBtn.textContent = '⬇ Download Report';
+    if(openBtn) openBtn.textContent = '⬇ Download .html';
+  }
+}
+// Run after DOM ready — sendPrompt is injected by Cowork runtime
+setTimeout(initContextButtons, 500);
 
 updateScope();
 
@@ -1174,27 +1239,79 @@ function showResultsPanel(title){
   const p = document.getElementById('resultsPanel');
   p.style.display = 'block';
   document.getElementById('resultsPanelTitle').textContent = title || 'Analysis Results';
-  document.getElementById('resultsBody').innerHTML = '<span class="results-cursor"></span>';
+  const body = document.getElementById('resultsBody');
+  body.className = 'results-body results-streaming';
+  body.innerHTML = '<span class="results-cursor"></span>';
   _resultsText = '';
   p.scrollIntoView({behavior:'smooth', block:'start'});
 }
 function appendResults(text){
   _resultsText += text;
   const body = document.getElementById('resultsBody');
-  body.innerHTML = _resultsText.replace(/\n/g,'<br>') + '<span class="results-cursor"></span>';
+  // During streaming: escape HTML and show as pre-wrap for performance
+  const escaped = _resultsText
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  body.innerHTML = escaped + '<span class="results-cursor"></span>';
   body.scrollTop = body.scrollHeight;
 }
 function finaliseResults(){
   const body = document.getElementById('resultsBody');
-  body.innerHTML = _resultsText.replace(/\n/g,'<br>');
+  // Once complete: parse markdown into rich HTML
+  body.className = 'results-body';
+  if(typeof marked !== 'undefined'){
+    marked.setOptions({ breaks: true, gfm: true });
+    body.innerHTML = marked.parse(_resultsText);
+  } else {
+    body.innerHTML = _resultsText.replace(/\n/g,'<br>');
+  }
+  body.scrollTop = 0; // scroll to top so user reads from section 1
 }
-function copyResults(){ navigator.clipboard.writeText(_resultsText).then(()=>alert('Copied!')); }
+function copyResults(){ navigator.clipboard.writeText(_resultsText).then(()=>{ const btn=document.querySelector('[onclick="copyResults()"]'); const orig=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=orig,1500); }); }
 function downloadResults(){
   const country = document.getElementById('countryInput').value.trim().replace(/\s+/g,'_') || 'Analysis';
-  const title = document.getElementById('resultsPanelTitle').textContent.replace(/\s+/g,'_');
+  const title = document.getElementById('resultsPanelTitle').textContent;
+  const bodyEl = document.getElementById('resultsBody');
+  const renderedHtml = bodyEl.innerHTML || _resultsText.replace(/\n/g,'<br>');
+  const fullHtml = `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>TGI Fridays — ${title}</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;background:#F5F5F7;color:#1D1D1F;padding:40px 20px;-webkit-font-smoothing:antialiased;}
+  .doc{max-width:900px;margin:0 auto;background:#fff;border-radius:12px;padding:48px 52px;box-shadow:0 4px 24px rgba(0,0,0,0.08);}
+  .doc-header{border-bottom:3px solid #E8192C;margin-bottom:36px;padding-bottom:18px;}
+  .doc-logo{background:#E8192C;color:#fff;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:6px 10px;border-radius:5px;display:inline-block;margin-bottom:10px;}
+  .doc-title{font-size:26px;font-weight:700;color:#1D1D1F;}
+  .doc-meta{font-size:12px;color:#6E6E73;margin-top:4px;}
+  h1{font-size:22px;font-weight:700;color:#E8192C;margin:0 0 14px;padding-bottom:10px;border-bottom:2px solid #E8192C;}
+  h2{font-size:17px;font-weight:700;color:#1D1D1F;margin:32px 0 10px;padding-bottom:6px;border-bottom:1px solid #D2D2D7;}
+  h3{font-size:14px;font-weight:700;color:#E8192C;margin:20px 0 8px;}
+  h4{font-size:13px;font-weight:700;color:#1D1D1F;margin:14px 0 6px;}
+  p{margin:0 0 10px;line-height:1.7;}
+  strong{font-weight:700;}
+  ul,ol{margin:8px 0 14px 22px;}
+  li{margin-bottom:5px;line-height:1.6;}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:12px;}
+  th{background:#E8192C;color:#fff;padding:9px 14px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;}
+  td{padding:9px 14px;border-bottom:1px solid #D2D2D7;vertical-align:top;}
+  tr:last-child td{border-bottom:none;}
+  tr:nth-child(even) td{background:#F5F5F7;}
+  hr{border:none;border-top:1px solid #D2D2D7;margin:24px 0;}
+  code{background:#F5F5F7;padding:2px 6px;border-radius:4px;font-size:11px;font-family:monospace;}
+  blockquote{border-left:3px solid #E8192C;margin:14px 0;padding:10px 16px;background:rgba(232,25,44,0.04);color:#6E6E73;}
+</style></head><body>
+<div class="doc">
+  <div class="doc-header">
+    <div class="doc-logo">TGI FRIDAYS</div>
+    <div class="doc-title">${title}</div>
+    <div class="doc-meta">Generated ${new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})} · Franchise Development Intelligence</div>
+  </div>
+  ${renderedHtml}
+</div>
+</body></html>`;
   const a = document.createElement('a');
-  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(_resultsText);
-  a.download = `TGI_Fridays_${country}_${title}.txt`;
+  a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(fullHtml);
+  a.download = `TGI_Fridays_${country}_${title.replace(/[\s—–]+/g,'_').replace(/[^a-zA-Z0-9_]/g,'')}.html`;
   a.click();
 }
 
