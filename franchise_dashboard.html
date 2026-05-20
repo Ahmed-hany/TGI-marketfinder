@@ -207,6 +207,16 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
 .hlink-pending{background:var(--surface2);color:var(--text3);border:1px solid var(--border);cursor:default;pointer-events:none;}
 .hlink-ready{background:rgba(255,159,10,0.08);color:var(--orange);border:1px solid rgba(255,159,10,0.25);cursor:pointer;}
 .hlink-ready:hover{background:var(--orange);color:#fff;border-color:var(--orange);}
+.hlink-saved{background:rgba(52,199,89,0.08);color:var(--green);border:1px solid rgba(52,199,89,0.25);cursor:pointer;}
+.hlink-saved:hover{background:var(--green);color:#fff;border-color:var(--green);}
+.hlink-delete{background:rgba(232,25,44,0.06);color:var(--red);border:1px solid rgba(232,25,44,0.18);cursor:pointer;}
+.hlink-delete:hover{background:var(--red);color:#fff;border-color:var(--red);}
+.saved-auto-banner{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(52,199,89,0.07);border:1px solid rgba(52,199,89,0.2);border-radius:7px;margin-top:10px;font-size:11px;color:var(--text2);}
+.saved-auto-banner strong{color:var(--green);}
+.cache-type-tag{font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.05em;margin-left:4px;}
+.ctt-full{background:rgba(232,25,44,0.1);color:var(--red);}
+.ctt-gtm{background:rgba(52,199,89,0.1);color:var(--green);}
+.ctt-creative{background:rgba(255,159,10,0.1);color:var(--orange);}
 
 /* ─── WELCOME / ACTIVE ─── */
 .welcome-card{background:var(--surface);border-radius:12px;box-shadow:var(--shadow);padding:24px 22px;text-align:center;margin-bottom:14px;}
@@ -395,6 +405,10 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
     <span class="header-title">Franchise Development Intelligence</span>
   </div>
   <div class="header-right">
+    <button class="settings-btn" id="savedReportsHeaderBtn" onclick="scrollToHistory()" title="Saved reports in cache">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M17 3H5c-1.1 0-2 .9-2 2v16l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+      <span id="savedCountBadge">0 saved</span>
+    </button>
     <button class="settings-btn" id="settingsBtn" onclick="openSettings()">
       <span class="api-dot" id="apiDot"></span>API Key
     </button>
@@ -784,6 +798,37 @@ body{font-family:-apple-system,'SF Pro Display','Helvetica Neue',Arial,sans-seri
   </div><!-- /right -->
 </div><!-- /layout -->
 
+<!-- ══ CACHE MODAL ══ -->
+<div class="modal-overlay hidden" id="cacheModal" onclick="closeCacheOutside(event)">
+  <div class="modal-box" style="max-width:480px;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="width:36px;height:36px;background:rgba(52,199,89,0.12);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#34C759"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+      </div>
+      <div>
+        <div class="modal-title" id="cacheModalTitle" style="margin-bottom:0;">Saved Report Found</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px;" id="cacheModalDate">—</div>
+      </div>
+    </div>
+    <div class="modal-hint" style="margin-bottom:20px;border-left:3px solid var(--green);background:rgba(52,199,89,0.06);">
+      💾 A saved report already exists for this market. View it instantly — <strong>no tokens used</strong> — or regenerate a fresh analysis.
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="modal-btn modal-btn-primary" style="flex:1;background:var(--green);" onclick="viewCachedReport()">
+        View Saved Report
+      </button>
+      <button class="modal-btn modal-btn-ghost" style="flex:1;" onclick="regenerateForced()">
+        ↻ Regenerate
+      </button>
+    </div>
+    <div style="text-align:center;margin-top:10px;">
+      <button onclick="closeCacheModal()" style="background:none;border:none;font-size:11px;color:var(--text3);cursor:pointer;">Cancel</button>
+      <span style="color:var(--text3);font-size:11px;margin:0 6px;">·</span>
+      <button onclick="deleteCachedReport()" style="background:none;border:none;font-size:11px;color:#E8192C;cursor:pointer;">Delete saved report</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ API KEY MODAL ══ -->
 <div class="modal-overlay hidden" id="settingsModal" onclick="closeSettingsOutside(event)">
   <div class="modal-box">
@@ -1033,10 +1078,13 @@ function generate(){
     setTimeout(()=>document.getElementById('countryInput').style.borderColor='',1500);
     return;
   }
-  const prompt=buildPrompt(country,getPartnerTypes(),depth);
-  document.getElementById('generateBtn').disabled=true;
-  showActive(country);
-  smartSend(prompt, `Full Analysis — ${country}`);
+  checkCacheBeforeGenerate(country, 'full', ()=>{
+    _currentCountry=country; _currentReportType='full'; _currentReportTitle=`Full Analysis — ${country}`;
+    const prompt=buildPrompt(country,getPartnerTypes(),depth);
+    document.getElementById('generateBtn').disabled=true;
+    showActive(country);
+    smartSend(prompt, `Full Analysis — ${country}`);
+  });
 }
 
 function generateGTM(){
@@ -1047,6 +1095,9 @@ function generateGTM(){
     setTimeout(()=>document.getElementById('countryInput').style.borderColor='',1500);
     return;
   }
+  checkCacheBeforeGenerate(country, 'gtm', ()=>_runGTM(country));
+}
+function _runGTM(country){
   const partnerTypes=getPartnerTypes();
   const partnerNote=partnerTypes.length?`Priority partner categories: ${partnerTypes.join(', ')}.`:'Include all relevant franchise partner categories.';
   const prompt=`CONTEXT (do NOT output):
@@ -1078,6 +1129,7 @@ AUTOMATED STACK: $400–800/mo — Apollo.io + Clay + LinkedIn Sales Navigator +
 30-DAY ACTION PLAN: Minimum 6 concrete actions with owner role and deadline.
 
 After completing, save as: TGI_Fridays_${country.replace(/\s+/g,'_')}_GTM.docx`;
+  _currentCountry=country; _currentReportType='gtm'; _currentReportTitle=`GTM Strategy — ${country}`;
   showActive(country);
   smartSend(prompt, `GTM Strategy — ${country}`);
 }
@@ -1090,6 +1142,9 @@ function generateCreative(){
     setTimeout(()=>document.getElementById('countryInput').style.borderColor='',1500);
     return;
   }
+  checkCacheBeforeGenerate(country, 'creative', ()=>_runCreative(country));
+}
+function _runCreative(country){
   const prompt=`CONTEXT (do NOT output):
 TGI Fridays international franchise recruitment. Positioning: "In Here, It's Always Friday" — American casual dining, full bar, celebratory occasion. Recruiting franchise partners in ${country}.
 
@@ -1122,6 +1177,7 @@ CAMPAIGN CONCEPTS (3):
 For each: campaign name, core message, audience, channel, mechanics, 3-month budget range, expected qualified leads.
 
 After completing, save as: TGI_Fridays_${country.replace(/\s+/g,'_')}_Creative_Brief.docx`;
+  _currentCountry=country; _currentReportType='creative'; _currentReportTitle=`Creative Brief — ${country}`;
   showActive(country);
   smartSend(prompt, `Creative Brief — ${country}`);
 }
@@ -1137,8 +1193,35 @@ function addToHistory(country){
 
 function renderHistory(){
   const body=document.getElementById('historyBody');
-  if(!analyses.length){body.innerHTML='<div class="history-empty">No analyses yet. Select a market above to begin.</div>';return;}
-  body.innerHTML=analyses.map(a=>`
+  // Merge session analyses with saved cache index
+  const saved = getSavedReportsIndex();
+  // Build a unified list — saved entries first (most recent), then session entries not already in saved
+  const savedKeys = new Set(saved.map(s=>_rptKey(s.country,s.type)));
+  const sessionOnly = analyses.filter(a=>!savedKeys.has(_rptKey(a.country,'full')));
+
+  if(!saved.length && !analyses.length){
+    body.innerHTML='<div class="history-empty">No analyses yet. Select a market above to begin.</div>';
+    return;
+  }
+
+  const savedHtml = saved.map(s=>`
+    <div class="history-item" id="cached_${s.key}">
+      <div class="history-item-top" onclick="setCountryOnly('${s.country}')">
+        <div class="history-flag">${getFlag(s.country)}</div>
+        <div style="flex:1;min-width:0;">
+          <div class="history-country">${s.country} <span class="cache-type-tag ctt-${s.type}">${s.type==='full'?'Full':s.type==='gtm'?'GTM':'Creative'}</span></div>
+          <div class="history-meta">${s.dateLabel}</div>
+        </div>
+        <span class="history-badge badge-ready">✓ Saved</span>
+      </div>
+      <div class="history-links">
+        <button class="hlink hlink-saved" onclick="viewSavedByKey('${s.key}')">▶ View</button>
+        <button class="hlink hlink-doc" onclick="downloadSavedByKey('${s.key}')">⬇ HTML</button>
+        <button class="hlink hlink-delete" onclick="deleteReport('${s.key}')">✕</button>
+      </div>
+    </div>`).join('');
+
+  const sessionHtml = sessionOnly.map(a=>`
     <div class="history-item" id="hitem_${a.id}">
       <div class="history-item-top" onclick="setCountryOnly('${a.country}')">
         <div class="history-flag">${a.flag}</div>
@@ -1149,6 +1232,61 @@ function renderHistory(){
         ${a.ready?`<button class="hlink hlink-doc" onclick="openFile('${a.localRawPath}')">Open .docx</button>`:`<span class="hlink hlink-pending">Generating…</span><button class="hlink hlink-ready" onclick="markReady('${a.id}')">Mark ready</button>`}
       </div>
     </div>`).join('');
+
+  body.innerHTML = savedHtml + sessionHtml;
+}
+
+function viewSavedByKey(key){
+  const entry = (() => { try { return JSON.parse(localStorage.getItem(key)||'null'); } catch(e){ return null; } })();
+  if(!entry) return;
+  showResultsPanel(entry.title);
+  _resultsText = entry.text;
+  _currentCountry = entry.country;
+  _currentReportType = entry.type;
+  _currentReportTitle = entry.title;
+  // Render without re-saving
+  const body = document.getElementById('resultsBody');
+  body.className = 'results-body';
+  if(typeof marked !== 'undefined'){
+    marked.setOptions({ breaks: true, gfm: true });
+    body.innerHTML = marked.parse(_resultsText);
+  } else {
+    body.innerHTML = _resultsText.replace(/\n/g,'<br>');
+  }
+  body.scrollTop = 0;
+  showActive(entry.country);
+  const el = document.getElementById('progressSteps');
+  if(el) el.innerHTML = `
+    <div class="saved-auto-banner">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--green)"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+      <span><strong>Loaded from cache</strong> · ${entry.dateLabel} · No tokens used ·
+        <button onclick="_pendingCacheKey='${key}';_pendingGenerateFn=()=>{ checkCacheBeforeGenerate('${entry.country}','${entry.type}',()=>{ if('${entry.type}'==='full') generate(); else if('${entry.type}'==='gtm') _runGTM('${entry.country}'); else _runCreative('${entry.country}'); }); };regenerateForced();" style="background:none;border:none;color:var(--red);font-size:11px;font-weight:600;cursor:pointer;padding:0;margin-left:2px;">↻ Regenerate</button>
+      </span>
+    </div>`;
+  document.getElementById('driveActions').classList.add('visible');
+  document.getElementById('resultsPanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function downloadSavedByKey(key){
+  const entry = (() => { try { return JSON.parse(localStorage.getItem(key)||'null'); } catch(e){ return null; } })();
+  if(!entry) return;
+  // Temporarily set globals and download
+  const prev = { c:_currentCountry, t:_currentReportType, ti:_currentReportTitle, txt:_resultsText };
+  _currentCountry=entry.country; _currentReportType=entry.type; _currentReportTitle=entry.title; _resultsText=entry.text;
+  // Build rendered HTML
+  const tmp = document.createElement('div');
+  tmp.className = 'results-body';
+  if(typeof marked !== 'undefined'){ marked.setOptions({breaks:true,gfm:true}); tmp.innerHTML=marked.parse(entry.text); }
+  else { tmp.innerHTML=entry.text.replace(/\n/g,'<br>'); }
+  document.body.appendChild(tmp);
+  // Swap results body temporarily
+  const real = document.getElementById('resultsBody');
+  const realHTML = real.innerHTML;
+  real.innerHTML = tmp.innerHTML;
+  downloadResults();
+  real.innerHTML = realHTML;
+  document.body.removeChild(tmp);
+  Object.assign({}, prev); _currentCountry=prev.c; _currentReportType=prev.t; _currentReportTitle=prev.ti; _resultsText=prev.txt;
 }
 
 function setCountryOnly(name){ document.getElementById('countryInput').value=name; }
@@ -1210,6 +1348,8 @@ function initContextButtons(){
 setTimeout(initContextButtons, 500);
 
 updateScope();
+updateSavedBadge();
+renderHistory(); // populate from localStorage on load
 
 /* ─── API KEY SETTINGS ─── */
 function checkApiKey(){
@@ -1264,7 +1404,18 @@ function finaliseResults(){
   } else {
     body.innerHTML = _resultsText.replace(/\n/g,'<br>');
   }
-  body.scrollTop = 0; // scroll to top so user reads from section 1
+  body.scrollTop = 0;
+
+  // ── AUTO-SAVE to localStorage ──
+  if(_currentCountry && _resultsText.length > 200){
+    saveReport(_currentCountry, _currentReportType, _currentReportTitle, _resultsText);
+    // Show save confirmation banner in results header
+    const hdr = document.getElementById('resultsPanelTitle');
+    if(hdr){
+      const orig = hdr.textContent;
+      hdr.innerHTML = orig + ' <span style="font-size:10px;font-weight:600;color:var(--green);background:rgba(52,199,89,0.1);padding:2px 7px;border-radius:4px;margin-left:6px;">✓ Saved</span>';
+    }
+  }
 }
 function copyResults(){ navigator.clipboard.writeText(_resultsText).then(()=>{ const btn=document.querySelector('[onclick="copyResults()"]'); const orig=btn.textContent; btn.textContent='Copied!'; setTimeout(()=>btn.textContent=orig,1500); }); }
 function downloadResults(){
@@ -1378,6 +1529,126 @@ function smartSend(prompt, panelTitle){
     callClaude(prompt, panelTitle); // Vercel / standalone mode
   }
 }
+
+/* ═══════════════════════════════════════
+   SAVED REPORTS CACHE (localStorage)
+   Key format: tgi_rpt_{country_slug}_{type}
+   Index key:  tgi_rpt_index
+   ═══════════════════════════════════════ */
+let _pendingGenerateFn = null;   // stores the generate fn for "Regenerate" flow
+let _pendingCacheKey   = null;   // key of the report shown in cache modal
+
+function _rptKey(country, type){
+  return 'tgi_rpt_' + country.toLowerCase().replace(/\s+/g,'_') + '_' + type;
+}
+
+function saveReport(country, type, title, text){
+  try {
+    const key = _rptKey(country, type);
+    const entry = { country, type, title, text, key,
+      timestamp: Date.now(),
+      dateLabel: new Date().toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'}) };
+    localStorage.setItem(key, JSON.stringify(entry));
+    // Update index
+    let idx = getSavedReportsIndex();
+    idx = idx.filter(i=>i.key!==key); // remove old entry for same country+type
+    idx.unshift({ key, country, type, title, dateLabel: entry.dateLabel, timestamp: entry.timestamp });
+    localStorage.setItem('tgi_rpt_index', JSON.stringify(idx));
+    updateSavedBadge();
+    renderHistory();
+  } catch(e){ console.warn('Cache save failed:', e); }
+}
+
+function getSavedReportsIndex(){
+  try { return JSON.parse(localStorage.getItem('tgi_rpt_index') || '[]'); }
+  catch(e){ return []; }
+}
+
+function loadReport(country, type){
+  try {
+    const raw = localStorage.getItem(_rptKey(country, type));
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){ return null; }
+}
+
+function deleteReport(key){
+  try {
+    localStorage.removeItem(key);
+    let idx = getSavedReportsIndex();
+    idx = idx.filter(i=>i.key!==key);
+    localStorage.setItem('tgi_rpt_index', JSON.stringify(idx));
+    updateSavedBadge();
+    renderHistory();
+  } catch(e){}
+}
+
+function updateSavedBadge(){
+  const idx = getSavedReportsIndex();
+  const el = document.getElementById('savedCountBadge');
+  if(el) el.textContent = idx.length + ' saved';
+}
+
+function scrollToHistory(){
+  document.getElementById('historyBody')?.closest('.card')?.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+/* ─── CACHE MODAL ─── */
+function checkCacheBeforeGenerate(country, type, generateFn){
+  const saved = loadReport(country, type);
+  if(saved){
+    _pendingGenerateFn = generateFn;
+    _pendingCacheKey   = saved.key;
+    document.getElementById('cacheModalTitle').textContent = saved.country + ' — ' + saved.title.split('—')[0].trim();
+    document.getElementById('cacheModalDate').textContent = 'Last generated: ' + saved.dateLabel;
+    document.getElementById('cacheModal').classList.remove('hidden');
+  } else {
+    generateFn();
+  }
+}
+
+function viewCachedReport(){
+  if(!_pendingCacheKey) return;
+  const entry = (() => { try { return JSON.parse(localStorage.getItem(_pendingCacheKey)||'null'); } catch(e){ return null; } })();
+  closeCacheModal();
+  if(!entry) return;
+  // Show in results panel
+  showResultsPanel(entry.title);
+  _resultsText = entry.text;
+  finaliseResults();
+  // Show a "from cache" banner in the active card
+  showActive(entry.country);
+  const el = document.getElementById('progressSteps');
+  if(el) el.innerHTML = `
+    <div class="saved-auto-banner">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--green)"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/></svg>
+      <span><strong>Loaded from saved cache</strong> · ${entry.dateLabel} · No tokens used ·
+        <button onclick="regenerateForced()" style="background:none;border:none;color:var(--red);font-size:11px;font-weight:600;cursor:pointer;padding:0;margin-left:2px;">↻ Regenerate</button>
+      </span>
+    </div>`;
+  document.getElementById('driveActions').classList.add('visible');
+}
+
+function regenerateForced(){
+  closeCacheModal();
+  if(typeof _pendingGenerateFn === 'function') _pendingGenerateFn();
+}
+
+function deleteCachedReport(){
+  if(_pendingCacheKey){ deleteReport(_pendingCacheKey); }
+  closeCacheModal();
+}
+
+function closeCacheModal(){
+  document.getElementById('cacheModal').classList.add('hidden');
+}
+function closeCacheOutside(e){
+  if(e.target===document.getElementById('cacheModal')) closeCacheModal();
+}
+
+/* ─── AUTO-SAVE ON FINALISE ─── */
+let _currentReportType  = 'full';
+let _currentReportTitle = '';
+let _currentCountry     = '';
 </script>
 </body>
 </html>
